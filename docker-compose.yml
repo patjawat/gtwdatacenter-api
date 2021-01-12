@@ -1,0 +1,59 @@
+version: '2'
+services:
+  mariaDB:
+    image: mariadb
+    hostname: mariadb
+    container_name: mariadb
+    restart: always
+    volumes:
+      # - ./docker/mariadb/initdb/:/docker-entrypoint-initdb.d
+      # - ./docker/mariadb/conf.d:/etc/mysql/conf.d
+      - ./docker/mariadb/data/:/var/lib/mysql
+    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_general_ci']
+
+    ports:
+      - 3306:3306
+    environment:
+      - TZ=Asia/Bangkok
+      - MYSQL_ROOT_PASSWORD=docker
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=docker
+      - MYSQL_ROOT_HOST=% 
+
+
+  # mysql80:
+  #   image: mysql:8.0
+  #   container_name: mysql8.0
+  #   ports:
+  #     - 3380:3306
+  #   environment:
+  #     - MYSQL_DATABASE=work
+  #     - MYSQL_USER=worker
+  #     - MYSQL_PASSWORD=worker
+  #     - MYSQL_ROOT_PASSWORD=root
+  #     - TZ=UTC
+  #   volumes:
+  #     - ./docker/mysql/mysql8.0/conf.d:/etc/mysql/conf.d:ro
+  #     - ./docker/mysql/mysql8.0/logs:/var/log/mysql:rw
+  #     # - ./docker/mysql/mysql8.0/initdb.d:/docker-entrypoint-initdb.d:ro
+  #     - ./docker/mysql/common:/app:ro
+  #     - ./docker/mysql/mysql8.0/data/:/var/lib/mysql
+  
+  phpmyadmin_mariadb:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    links:
+      - mariaDB:db
+    ports:
+      - 8200:80
+    environment:
+      MYSQL_USERNAME: root
+      MYSQL_ROOT_PASSWORD: docker
+      PMA_HOST: mariaDB
+
+  # phpmyadmin_mysql:
+  #   image: phpmyadmin/phpmyadmin
+  #   links:
+  #     - mysql80:db
+  #   ports:
+  #     - 8300:80
