@@ -35,13 +35,17 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             'profile' => $user,
         ]);
     });
-    Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
 
-    Route::apiResource('branchs','BranchController');
 
-    });
+
 });
 
+Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
+        
+    Route::apiResource('services','ServiceController');
+    Route::apiResource('branchs','BranchController');
+
+});
 
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
@@ -54,7 +58,6 @@ Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
     Route::post('/logs','LogController@insert');
     Route::get('/versioninfo', 'VersionController@versioninfo')->middleware('guest');
     Route::apiResource('versions', 'VersionController');
-    Route::apiResource('services','ServiceController');
 
 
     
