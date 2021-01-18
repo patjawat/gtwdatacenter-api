@@ -14,7 +14,7 @@ class CreateBranchTable extends Migration
     public function up()
     {
         Schema::create('branchs', function (Blueprint $table) {
-            $table->String('code',10)->primary();
+            $table->String('code',10)->primary();;
             $table->String('name');
             $table->String('url');
             $table->timestamps();

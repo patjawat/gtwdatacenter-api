@@ -44,6 +44,8 @@ Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
         
     Route::apiResource('services','ServiceController');
     Route::apiResource('branchs','BranchController');
+    Route::post('datacenter/import-asset','DatacenterController@importAsset');
+    Route::get('datacenter/total-summary','DatacenterController@totalSummary');
 
 });
 
@@ -58,6 +60,7 @@ Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
     Route::post('/logs','LogController@insert');
     Route::get('/versioninfo', 'VersionController@versioninfo')->middleware('guest');
     Route::apiResource('versions', 'VersionController');
+
 
 
     
