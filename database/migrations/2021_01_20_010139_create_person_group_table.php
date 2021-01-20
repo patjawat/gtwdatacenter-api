@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLogsTable extends Migration
+class CreatePersonGroupTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,12 @@ class CreateLogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('logs', function (Blueprint $table) {
+        Schema::create('person_groups', function (Blueprint $table) {
             $table->id();
-            $table->longText('data_json')->nullable();
-            $table->String('type')->nullable();
-            $table->integer('user_id')->nullable();
-            $table->String('username')->nullable();
             $table->String('hos_code')->nullable();
             $table->String('hos_name')->nullable();
-            $table->String('ip_gateway')->nullable();
-            $table->String('ip_client')->nullable();
+            $table->String('label')->nullable();
+            $table->String('total')->nullable();
             $table->timestamps();
         });
     }
@@ -34,6 +30,6 @@ class CreateLogsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('logs');
+        Schema::dropIfExists('person_group');
     }
 }

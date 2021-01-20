@@ -44,7 +44,7 @@ class Kernel extends HttpKernel
         
         'api' => [
             // 'throttle:api',
-            'throttle:1000,1',
+            'throttle:10000,1',
             // 'bindings',
             //  \App\Library\Cobalt\Http\Middleware\LogMiddleware::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,

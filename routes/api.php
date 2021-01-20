@@ -42,10 +42,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
         
-    Route::apiResource('services','ServiceController');
     Route::apiResource('branchs','BranchController');
+    Route::get('datacenter','DatacenterController@index');
+    Route::post('datacenter/get-updatelog','DatacenterController@getUpdatelog');
+    Route::post('datacenter/summary-client','DatacenterController@summaryClient');
     Route::post('datacenter/import-asset','DatacenterController@importAsset');
-    Route::get('datacenter/total-summary','DatacenterController@totalSummary');
+    Route::post('datacenter/import-person','DatacenterController@importPerson');
 
 });
 

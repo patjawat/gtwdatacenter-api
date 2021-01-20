@@ -17,6 +17,10 @@ class CreateAssetsTable extends Migration
             $table->id();
             $table->String('HOS_CODE')->comment('รหัสโรงพยาบาล');
             $table->String('HOS_NAME')->comment('ชื่อโรงพยาบาล');
+            $table->String('GROUP_CLASS_CODE')->nullable();
+            $table->String('GROUP_CODE')->nullable();
+            $table->String('TYPE_CODE')->nullable();
+            $table->String('NUM')->nullable();
             $table->String('TYPE_SUB_ID')->nullable()->comment('ประเภท');
             $table->String('ARTICLE_NUM')->nullable()->comment('หัสเลขครุภัณฑ์');
             $table->String('YEAR_ID')->nullable()->comment('ปีงบประมาณ');

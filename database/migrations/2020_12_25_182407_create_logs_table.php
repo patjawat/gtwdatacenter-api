@@ -27,6 +27,8 @@ class CreateLogsTable extends Migration
         });
     }
 
+    
+
     /**
      * Reverse the migrations.
      *

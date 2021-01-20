@@ -11,6 +11,10 @@ class Assets extends Model
     // protected $primaryKey = ['asset_number'];
     // protected $primaryKey = ['hos_code', 'asset_number'];
     protected $fillable = [
+        'GROUP_CLASS_CODE',
+        'TYPE_CODE',
+        'GROUP_CODE',
+        'NUM',
         'HOS_CODE',
         'HOS_NAME',
         'TYPE_SUB_ID',
