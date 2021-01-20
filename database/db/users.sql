@@ -26,7 +26,7 @@ SET time_zone = "+00:00";
 --
 
 INSERT INTO `users` (`id`, `name`, `username`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'patjawat', 'patjawat', 'admin@local.com', NULL, '$2y$10$czBhgBY0TgrQ3Jacg4Q/buE2jUymx0BojMa66CrxtYpAx2i45cv7y', NULL, '2021-01-18 00:25:08', '2021-01-18 00:25:08');
+(1, 'demo', 'demo', 'admin@local.com', NULL, '$2y$10$czBhgBY0TgrQ3Jacg4Q/buE2jUymx0BojMa66CrxtYpAx2i45cv7y', NULL, '2021-01-18 00:25:08', '2021-01-18 00:25:08');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
