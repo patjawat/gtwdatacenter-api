@@ -50,16 +50,18 @@ class DatacenterController extends Controller
             'infomation' => [
                 'labels' => 'ข้อมูลพื้นฐาน'
             ],
-            'person' => $this->personSummary(),
             'assets' => $this->assetsSummary(),
+            'person' => $this->personSummary(),
         ]);
     }
 
     // สรุปข้อมูลครุภัณฑ์
     private function assetsSummary(){
+        $items = Assets::all();
         return [
-            'items' => 'ข้อมูลครุภัณฑ์',
-            'items' => Assets::all()
+            'items' => 'ข้อมูลทรัพย์สิน',
+            'total' => $items->count(),
+            // 'items' => $items
         ];
     }
     // สรุปข้อมูลพนักงาน
