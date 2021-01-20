@@ -73,6 +73,7 @@ class DatacenterController extends Controller
 
         unset($personGroup->id);
             return [
+                'total' => $personGroup->sum('total'),
                 'person_group' =>[
                     'labels' => 'แยกตามกลุ่มงาน',
                     'items' => $personGroup
