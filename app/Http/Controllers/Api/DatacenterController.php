@@ -44,17 +44,25 @@ class DatacenterController extends Controller
         LEFT JOIN supplies_class ON supplies_class.GROUP_CLASS_CODE = assets.GROUP_CLASS_CODE
         LEFT JOIN supplies_group ON supplies_group.GROUP_CODE = supplies_class.GROUP_CODE
         LEFT JOIN supplies_type ON supplies_type.SUP_TYPE_ID = supplies_prop.TYPE_ID";
-        
-;
+
         return response()->json([
             'infomation' => [
-                'labels' => 'ข้อมูลพื้นฐาน'
+                'labels' => 'ข้อมูลพื้นฐาน',
+                'authdaily' => $this->authDaily(),
             ],
             'assets' => $this->assetsSummary(),
             'person' => $this->personSummary(),
         ]);
     }
-
+    
+// การเข้าใช้งานประจำวัน
+    private function authDaily(){
+        return DB::table('logs')
+        ->select('hos_name', DB::raw('COUNT(hos_code) as total'))
+        ->where('created_at', 'like', date('Y-m-d').'%')
+        ->groupBy('hos_name')
+        ->get();
+    }
     // สรุปข้อมูลครุภัณฑ์
     private function assetsSummary(){
         $items = Assets::all();
