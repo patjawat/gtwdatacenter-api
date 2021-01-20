@@ -54,12 +54,13 @@ class DatacenterController extends Controller
             'person' => $this->personSummary(),
         ]);
     }
-    
+
 // การเข้าใช้งานประจำวัน
     private function authDaily(){
         return DB::table('logs')
         ->select('hos_name', DB::raw('COUNT(hos_code) as total'))
         ->where('created_at', 'like', date('Y-m-d').'%')
+        ->where('type', '=','login')
         ->groupBy('hos_name')
         ->get();
     }
