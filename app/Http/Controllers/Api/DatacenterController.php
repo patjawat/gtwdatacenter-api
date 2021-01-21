@@ -66,7 +66,7 @@ private function branch(){
             'name' => $branch->name,
             'service_plan' => $branch->service_plan,
             'summaryAsset' => $this->summeryAsset($branch->hos_code),
-            'summaryPerson' => $this->summeryAsset($branch->hos_code)
+            'summaryPerson' => $this->summeryPerson($branch->hos_code)
         ];
     }
 
