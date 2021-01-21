@@ -9,4 +9,5 @@ class branch extends Model
 {
     use HasFactory;
     protected $table = 'branchs';
+    
 }
