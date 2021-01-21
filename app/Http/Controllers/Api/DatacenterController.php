@@ -58,12 +58,34 @@ class DatacenterController extends Controller
     }
 
 private function branch(){
-    $branch = Branch::all();
+    $item = [];
+    foreach (Branch::all() as $branch)
+    {
+        $item[] = [
+            'hos_code' => $branch->hos_code,
+            'name' => $branch->name,
+            'service_plan' => $branch->service_plan,
+            'summaryAsset' => $this->summeryAsset($branch->hos_code),
+            'summaryPerson' => $this->summeryAsset($branch->hos_code)
+        ];
+    }
+
+
     return [
         'total' => $branch->count(),
-        'items' => $branch
+        'items' =>  $item
     ];
 }
+
+private function summeryAsset($id){
+    return Assets::where(['hos_code' => $id])->count();
+}
+
+private function summeryPerson($id){
+    return PersonGroup::where(['hos_code' => $id])->sum('total');
+}
+
+
 // การเข้าใช้งานประจำวัน
     private function authDaily(){
         return DB::table('logs')
