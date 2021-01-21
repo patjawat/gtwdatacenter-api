@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Logs;
+use App\Models\Branch;
 use App\Models\Assets;
 use App\Models\PersonGroup;
 use App\Models\PersonWork;
@@ -48,6 +49,7 @@ class DatacenterController extends Controller
         return response()->json([
             'infomation' => [
                 'labels' => 'ข้อมูลพื้นฐาน',
+                'branchs' => $this->branch(),
                 'authdaily' => $this->authDaily(),
             ],
             'assets' => $this->assetsSummary(),
@@ -55,6 +57,13 @@ class DatacenterController extends Controller
         ]);
     }
 
+private function branch(){
+    $branch = Branch::all();
+    return [
+        'total' => $branch->count(),
+        'items' => $branch
+    ];
+}
 // การเข้าใช้งานประจำวัน
     private function authDaily(){
         return DB::table('logs')
