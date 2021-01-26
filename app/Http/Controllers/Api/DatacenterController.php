@@ -33,13 +33,6 @@ class DatacenterController extends Controller
         return $model->save();
 }
 
-    // เก็บ logs
-    // public function getUpdatelog(Request $request){
-    //     $data = $this->updateLog($request->type,$request);
-    //     return response()->json($data,200);
-    // }
-    
-
     public function index(){
         $sql = "SELECT CLASS_NAME,GROUP_NAME FROM assets
         LEFT JOIN supplies_prop ON supplies_prop.NUM = assets.NUM
@@ -82,10 +75,6 @@ private function summeryAsset($id){
     return Assets::where(['hos_code' => $id])->count();
 }
 
-private function summeryPerson($id){
-    return PersonGroup::where(['hos_code' => $id])->sum('total');
-}
-
 
 // การเข้าใช้งานประจำวัน
     private function authDaily(){
@@ -105,30 +94,7 @@ private function summeryPerson($id){
             // 'items' => $items
         ];
     }
-    // // สรุปข้อมูลพนักงาน
-    // private function personSummary(){
 
-    //     $personGroup = PersonGroup::all();
-    //     $personWork = PersonWork::all();
-    //     $personPosition = PersonPosition::all();
-
-    //     unset($personGroup->id);
-    //         return [
-    //             'total' => $personGroup->sum('total'),
-    //             'person_group' =>[
-    //                 'labels' => 'แยกตามกลุ่มงาน',
-    //                 'items' => $personGroup
-    //             ],
-    //             'person_work' =>[
-    //                 'labels' => 'แยกตามงาน',
-    //                 'items' => $personWork
-    //             ],
-    //             'person_position' =>[
-    //                 'labels' => 'แยกตามตำแหน่งงาน',
-    //                 'items' => $personPosition
-    //             ],
-    //         ];
-    // }
 
     //นับจำนวน record ตามหน่วยบริการ
     public function summaryClient(Request $request){
@@ -152,9 +118,35 @@ private function summeryPerson($id){
         foreach($request->items as $key => $value){
             Persons::updateOrCreate(['HOS_CODE' =>  $value['HOS_CODE'],'HOS_NAME' =>$value['HOS_NAME'],'HR_CID' => $value['HR_CID'], ],
                 [
-                'SEX' => $value['SEX'],
-                'HR_FNAME' => $value['HR_FNAME'],
-                'HR_LNAME' => $value['HR_LNAME']
+                    'HR_FNAME'=> $value['HR_FNAME'],
+                    'HR_LNAME'=> $value['HR_LNAME'],
+                    'HR_CID'=> $value['HR_CID'],
+                    'HR_BIRTHDAY'=> $value['HR_BIRTHDAY'],
+                    'HR_MARRY_STATUS_NAME'=> $value['HR_MARRY_STATUS_NAME'],
+                    'HR_RELIGION_NAME'=> $value['HR_RELIGION_NAME'],
+                    'HR_NATIONALITY_NAME'=> $value['HR_NATIONALITY_NAME'],
+                    'HR_CITIZENSHIP_NAME'=> $value['HR_CITIZENSHIP_NAME'],
+                    'SEX'=> $value['SEX'],
+                    'SEX_NAME'=> $value['SEX_NAME'],
+                    'HR_BLOODGROUP_NAME'=> $value['HR_BLOODGROUP_NAME'],
+                    'HR_DEPARTMENT_NAME'=> $value['HR_DEPARTMENT_NAME'],
+                    'HR_DEPARTMENT_SUB_NAME'=> $value['HR_DEPARTMENT_SUB_NAME'],
+                    'HR_DEPARTMENT_SUB_SUB_NAME'=> $value['HR_DEPARTMENT_SUB_SUB_NAME'],
+                    'HR_STARTWORK_DATE'=> $value['HR_STARTWORK_DATE'],
+                    'HR_POSITION_NUM'=> $value['HR_POSITION_NUM'],
+                    'HR_POSITION_ID'=> $value['HR_POSITION_ID'],
+                    'POSITION_IN_WORK'=> $value['POSITION_IN_WORK'],
+                    'VCODE'=> $value['VCODE'],
+                    'VCODE_DATE'=> $value['VCODE_DATE'],
+                    'HR_LEVEL_NAME'=> $value['HR_LEVEL_NAME'],
+                    'HR_STATUS_NAME'=> $value['HR_STATUS_NAME'],
+                    'HR_KIND_NAME'=> $value['HR_KIND_NAME'],
+                    'HR_KIND_TYPE_NAME'=> $value['HR_KIND_TYPE_NAME'],
+                    'HR_PERSON_TYPE_ID'=> $value['HR_PERSON_TYPE_ID'],
+                    'HR_PERSON_TYPE_NAME'=> $value['HR_PERSON_TYPE_NAME'],
+                    'HR_AGENCY_ID'=> $value['HR_AGENCY_ID'],
+                    'HR_SALARY'=> $value['HR_SALARY'],
+                    'MONEY_POSITION'=> $value['MONEY_POSITION'],
             ]); 
         }
         

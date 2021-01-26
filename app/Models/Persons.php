@@ -12,7 +12,6 @@ class Persons extends Model
         'HOS_CODE',
         'HOS_NAME',
         'HR_FNAME',
-        'HR_FNAME',
         'HR_LNAME',
         'HR_CID',
         'HR_BIRTHDAY',
