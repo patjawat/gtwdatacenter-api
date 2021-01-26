@@ -33,21 +33,17 @@ class DatacenterController extends Controller
         return $model->save();
 }
 
-    public function index(){
-        $sql = "SELECT CLASS_NAME,GROUP_NAME FROM assets
-        LEFT JOIN supplies_prop ON supplies_prop.NUM = assets.NUM
-        LEFT JOIN supplies_class ON supplies_class.GROUP_CLASS_CODE = assets.GROUP_CLASS_CODE
-        LEFT JOIN supplies_group ON supplies_group.GROUP_CODE = supplies_class.GROUP_CODE
-        LEFT JOIN supplies_type ON supplies_type.SUP_TYPE_ID = supplies_prop.TYPE_ID";
+    public function index(Request $request){
+        $hos_code = $request->hos_code;
 
         return response()->json([
             'infomation' => [
                 'labels' => 'ข้อมูลพื้นฐาน',
-                'branchs' => $this->branch(),
-                'authdaily' => $this->authDaily(),
+                'branchs' => $this->branch($hos_code),
+                'authdaily' => $this->authDaily($hos_code),
             ],
-            'assets' => $this->assetsSummary(),
-            'person' => $this->personSummary(),
+            'assets' => $this->assetsSummary($hos_code),
+            'person' => $this->personSummary($hos_code),
         ]);
     }
 
@@ -59,8 +55,8 @@ private function branch(){
             'hos_code' => $branch->hos_code,
             'name' => $branch->name,
             'service_plan' => $branch->service_plan,
-            'summaryAsset' => $this->summeryAsset($branch->hos_code),
-            'summaryPerson' => $this->summeryPerson($branch->hos_code)
+            // 'summaryAsset' => $this->summeryAsset($branch->hos_code),
+            // 'summaryPerson' => $this->summeryPerson($branch->hos_code)
         ];
     }
 
@@ -86,12 +82,24 @@ private function summeryAsset($id){
         ->get();
     }
     // สรุปข้อมูลครุภัณฑ์
-    private function assetsSummary(){
-        $items = Assets::all();
+    private function assetsSummary($hos_code){
+        
+
+        // $items = Assets::all();
+        $items = $hos_code ? Assets::where(['HOS_CODE' => $hos_code])->get() : Assets::all();
         return [
             'items' => 'ข้อมูลทรัพย์สิน',
             'total' => $items->count(),
-            // 'items' => $items
+            'items' => $items
+        ];
+    }
+ // สรุปข้อมูลบุคลากร
+    private function personSummary($hos_code){
+        $items = $hos_code ? Persons::where(['HOS_CODE' => $hos_code])->get() : Persons::all();
+        return [
+            'items' => 'ข้อมูลบุคลากร',
+            'total' => $items->count(),
+            'items' => $items
         ];
     }
 
