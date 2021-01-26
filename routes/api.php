@@ -44,7 +44,6 @@ Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
         
     Route::apiResource('branchs','BranchController');
     Route::get('datacenter','DatacenterController@index');
-    Route::post('datacenter/get-updatelog','DatacenterController@getUpdatelog');
     Route::post('datacenter/summary-client','DatacenterController@summaryClient');
     Route::post('datacenter/import-asset','DatacenterController@importAsset');
     Route::post('datacenter/import-person','DatacenterController@importPerson');
