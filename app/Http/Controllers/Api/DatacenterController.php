@@ -122,8 +122,6 @@ private function summeryAsset($id){
                     'HR_LNAME'=> $value['HR_LNAME'],
                     'HR_CID'=> $value['HR_CID'],
                     'HR_BIRTHDAY'=> $value['HR_BIRTHDAY'],
-                    'HR_NATIONALITY_NAME'=> $value['HR_NATIONALITY_NAME'],
-                    'HR_CITIZENSHIP_NAME'=> $value['HR_CITIZENSHIP_NAME'],
                     'SEX'=> $value['SEX'],
                     'SEX_NAME'=> $value['SEX_NAME'],
                     'HR_BLOODGROUP_NAME'=> $value['HR_BLOODGROUP_NAME'],
