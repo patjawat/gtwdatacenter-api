@@ -11,6 +11,7 @@ use App\Models\Assets;
 use App\Models\PersonGroup;
 use App\Models\PersonWork;
 use App\Models\PersonPosition;
+use App\Models\Persons;
 
 class DatacenterController extends Controller
 {
@@ -27,16 +28,16 @@ class DatacenterController extends Controller
         $model->hos_name = $information['hos_name'];
         $model->data_json = json_encode([
             'infomation' => $data['infomation'],
-            'data' => $data['data']
+            'data' => $data['items']
         ],JSON_UNESCAPED_UNICODE);
         return $model->save();
 }
 
     // เก็บ logs
-    public function getUpdatelog(Request $request){
-        $data = $this->updateLog($request->type,$request);
-        return response()->json($data,200);
-    }
+    // public function getUpdatelog(Request $request){
+    //     $data = $this->updateLog($request->type,$request);
+    //     return response()->json($data,200);
+    // }
     
 
     public function index(){
@@ -104,35 +105,36 @@ private function summeryPerson($id){
             // 'items' => $items
         ];
     }
-    // สรุปข้อมูลพนักงาน
-    private function personSummary(){
+    // // สรุปข้อมูลพนักงาน
+    // private function personSummary(){
 
-        $personGroup = PersonGroup::all();
-        $personWork = PersonWork::all();
-        $personPosition = PersonPosition::all();
+    //     $personGroup = PersonGroup::all();
+    //     $personWork = PersonWork::all();
+    //     $personPosition = PersonPosition::all();
 
-        unset($personGroup->id);
-            return [
-                'total' => $personGroup->sum('total'),
-                'person_group' =>[
-                    'labels' => 'แยกตามกลุ่มงาน',
-                    'items' => $personGroup
-                ],
-                'person_work' =>[
-                    'labels' => 'แยกตามงาน',
-                    'items' => $personWork
-                ],
-                'person_position' =>[
-                    'labels' => 'แยกตามตำแหน่งงาน',
-                    'items' => $personPosition
-                ],
-            ];
-    }
+    //     unset($personGroup->id);
+    //         return [
+    //             'total' => $personGroup->sum('total'),
+    //             'person_group' =>[
+    //                 'labels' => 'แยกตามกลุ่มงาน',
+    //                 'items' => $personGroup
+    //             ],
+    //             'person_work' =>[
+    //                 'labels' => 'แยกตามงาน',
+    //                 'items' => $personWork
+    //             ],
+    //             'person_position' =>[
+    //                 'labels' => 'แยกตามตำแหน่งงาน',
+    //                 'items' => $personPosition
+    //             ],
+    //         ];
+    // }
 
     //นับจำนวน record ตามหน่วยบริการ
     public function summaryClient(Request $request){
         return response()->json([
-            'assets' => Assets::where('HOS_CODE','=',$request->hos_code)->count()
+            'assets' => Assets::where('HOS_CODE','=',$request->hos_code)->count(),
+            'person' => Persons::where('HOS_CODE','=',$request->hos_code)->count()
         ]);
     }
 
@@ -145,83 +147,73 @@ private function summeryPerson($id){
     // สรุปข้อมูลพนักงาน
     public function importPerson(Request $request){
         // เก็บ logs ###
-        $data = [
-            'infomation' => $request->infomation,
-            'data' => [
-                'person_work' => $request->work,
-                'person_group' => $request->group,
-                'person_position' => $request->position,
-            ]
-        ];
-
-        $this->updateLog('update-person',$data);
-
-        foreach($request->group as $key => $value){
-            PersonGroup::updateOrCreate(['hos_code' =>  $request->infomation['hos_code'],'hos_name' => $request->infomation['hos_name'], 'label' =>  $value['HR_DEPARTMENT_NAME']],
-                ['total' => $value['person_count']
+        $this->updateLog('update-person',$request);
+       
+        foreach($request->items as $key => $value){
+            Persons::updateOrCreate(['HOS_CODE' =>  $value['HOS_CODE'],'HOS_NAME' =>$value['HOS_NAME'],'HR_CID' => $value['HR_CID'], ],
+                [
+                'SEX' => $value['SEX'],
+                'HR_FNAME' => $value['HR_FNAME'],
+                'HR_LNAME' => $value['HR_LNAME']
             ]); 
         }
+        
+        return response()->json($request, 200);        
 
-        foreach($request->work as $key => $value){
-            PersonWork::updateOrCreate(['hos_code' =>  $request->infomation['hos_code'],'hos_name' => $request->infomation['hos_name'], 'label' =>  $value['POSITION_IN_WORK']],
-                ['total' => $value['amount_count']
-            ]); 
-        }
-
-        foreach($request->work as $key => $value){
-            PersonPosition::updateOrCreate(['hos_code' =>  $request->infomation['hos_code'],'hos_name' => $request->infomation['hos_name'], 'label' =>  $value['POSITION_IN_WORK']],
-                ['total' => $value['amount_count']
-            ]); 
-        }
-            return response()->json($request, 200);        
     }
 
     //นำเข้าข้อมูลทรัพสิน
     public function importAsset(Request $request){
 
-        $data = $request->asset;
-        $infomation = $request->infomation;
+        // $infomation = $request->infomation;
+        $this->updateLog('update-asset',$request);
 
-        $asset = Assets::updateOrCreate(['HOS_CODE' =>  $infomation['hos_code'],'ARTICLE_NUM' => $data['ARTICLE_NUM']],
+        $data = '';
+        foreach($request->items as $key => $value){
+ 
+        $data = Assets::updateOrCreate(['HOS_CODE' =>  $value['HOS_CODE'],'ARTICLE_NUM' => $value['ARTICLE_NUM']],
            [
-            'HOS_NAME' => $infomation['hos_name'],
-            'GROUP_CLASS_CODE' => $data['GROUP_CLASS_CODE'],
-            'TYPE_CODE' => $data['TYPE_CODE'],
-            'GROUP_CODE' => $data['GROUP_CODE'],
-            'NUM' => $data['NUM'],
-            'TYPE_SUB_ID' => $data['TYPE_SUB_ID'],
-            'YEAR_ID' => $data['YEAR_ID'],
-            'ARTICLE_NAME' => $data['ARTICLE_NAME'],
-            'ARTICLE_PROP' => $data['ARTICLE_PROP'],
-            'SUP_UNIT_NAME' => $data['SUP_UNIT_NAME'],
-            'SERIAL_NO' => $data['SERIAL_NO'],
-            'BRAND_NAME' => $data['BRAND_NAME'],
-            'COLOR_NAME' => $data['COLOR_NAME'],
-            'MODEL_NAME' => $data['MODEL_NAME'],
-            'SIZE_NAME' => $data['SIZE_NAME'],
-            'PRICE_PER_UNIT' => $data['PRICE_PER_UNIT'],
-            'RECEIVE_DATE' => $data['RECEIVE_DATE'],
-            'METHOD_NAME' => $data['METHOD_NAME'],
-            'BUY_NAME' => $data['BUY_NAME'],
-            'BUDGET_NAME' => $data['BUDGET_NAME'],
-            'SUP_TYPE_NAME' => $data['SUP_TYPE_NAME'],
-            'DECLINE_NAME' => $data['DECLINE_NAME'],
-            'VENDOR_NAME' => $data['VENDOR_NAME'],
-            'HR_DEPARTMENT_SUB_NAME' => $data['HR_DEPARTMENT_SUB_NAME'],
-            'LOCATION_NAME' => $data['LOCATION_NAME'],
-            'LOCATION_LEVEL_NAME' => $data['LOCATION_LEVEL_NAME'],
-            'LEVEL_ROOM_NAME' => $data['LEVEL_ROOM_NAME'],
-            'REMARK' => $data['REMARK'],
-            'STATUS_NAME' => $data['STATUS_NAME'],
-            'OLD_USE' => $data['OLD_USE'],
-            'EXPIRE_DATE' => $data['EXPIRE_DATE'],
-            'PM_TYPE_NAME' => $data['PM_TYPE_NAME'],
-            'CAL_TYPE_NAME' => $data['CAL_TYPE_NAME'],
-            'RISK_TYPE_NAME' => $data['RISK_TYPE_NAME']
+            'HOS_NAME' => $value['HOS_NAME'],
+            'GROUP_CLASS_CODE' => $value['GROUP_CLASS_CODE'],
+            'TYPE_CODE' => $value['TYPE_CODE'],
+            'GROUP_CODE' => $value['GROUP_CODE'],
+            'NUM' => $value['NUM'],
+            'TYPE_SUB_ID' => $value['TYPE_SUB_ID'],
+            'YEAR_ID' => $value['YEAR_ID'],
+            'ARTICLE_NAME' => $value['ARTICLE_NAME'],
+            'ARTICLE_PROP' => $value['ARTICLE_PROP'],
+            'SUP_UNIT_NAME' => $value['SUP_UNIT_NAME'],
+            'SERIAL_NO' => $value['SERIAL_NO'],
+            'BRAND_NAME' => $value['BRAND_NAME'],
+            'COLOR_NAME' => $value['COLOR_NAME'],
+            'MODEL_NAME' => $value['MODEL_NAME'],
+            'SIZE_NAME' => $value['SIZE_NAME'],
+            'PRICE_PER_UNIT' => $value['PRICE_PER_UNIT'],
+            'RECEIVE_DATE' => $value['RECEIVE_DATE'],
+            'METHOD_NAME' => $value['METHOD_NAME'],
+            'BUY_NAME' => $value['BUY_NAME'],
+            'BUDGET_NAME' => $value['BUDGET_NAME'],
+            'SUP_TYPE_NAME' => $value['SUP_TYPE_NAME'],
+            'DECLINE_NAME' => $value['DECLINE_NAME'],
+            'VENDOR_NAME' => $value['VENDOR_NAME'],
+            'HR_DEPARTMENT_SUB_NAME' => $value['HR_DEPARTMENT_SUB_NAME'],
+            'LOCATION_NAME' => $value['LOCATION_NAME'],
+            'LOCATION_LEVEL_NAME' => $value['LOCATION_LEVEL_NAME'],
+            'LEVEL_ROOM_NAME' => $value['LEVEL_ROOM_NAME'],
+            'REMARK' => $value['REMARK'],
+            'STATUS_NAME' => $value['STATUS_NAME'],
+            'OLD_USE' => $value['OLD_USE'],
+            'EXPIRE_DATE' => $value['EXPIRE_DATE'],
+            'PM_TYPE_NAME' => $value['PM_TYPE_NAME'],
+            'CAL_TYPE_NAME' => $value['CAL_TYPE_NAME'],
+            'RISK_TYPE_NAME' => $value['RISK_TYPE_NAME']
            ]
         );
-
-        return response()->json($asset, 200);
     }
+  
+        return response()->json($data, 200);
+    }
+
+
 
 }
