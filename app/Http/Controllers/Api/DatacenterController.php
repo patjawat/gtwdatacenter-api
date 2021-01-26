@@ -124,7 +124,6 @@ private function summeryAsset($id){
                     'HR_BIRTHDAY'=> $value['HR_BIRTHDAY'],
                     'SEX'=> $value['SEX'],
                     'SEX_NAME'=> $value['SEX_NAME'],
-                    'HR_BLOODGROUP_NAME'=> $value['HR_BLOODGROUP_NAME'],
                     'HR_DEPARTMENT_NAME'=> $value['HR_DEPARTMENT_NAME'],
                     'HR_DEPARTMENT_SUB_NAME'=> $value['HR_DEPARTMENT_SUB_NAME'],
                     'HR_DEPARTMENT_SUB_SUB_NAME'=> $value['HR_DEPARTMENT_SUB_SUB_NAME'],

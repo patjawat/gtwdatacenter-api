@@ -17,7 +17,6 @@ class Persons extends Model
         'HR_BIRTHDAY',
         'SEX',
         'SEX_NAME',
-        'HR_BLOODGROUP_NAME',
         'HR_DEPARTMENT_NAME',
         'HR_DEPARTMENT_SUB_NAME',
         'HR_DEPARTMENT_SUB_SUB_NAME',
