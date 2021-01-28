@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use App\Models\Logs;
 use App\Models\Branch;
 use App\Models\Assets;
@@ -12,40 +13,93 @@ use App\Models\PersonGroup;
 use App\Models\PersonWork;
 use App\Models\PersonPosition;
 use App\Models\Persons;
+use App\Models\User;
 
 class DatacenterController extends Controller
 {
-// เก็บ logs
-    private function updateLog($type,$data){
-        $information = $data['infomation'];
-        $model = new Logs;
-        $model->type = $type;
-        $model->user_id = $information['user_id'];
-        $model->username = $information['username'];
-        $model->ip_client = $information['ip_client'];
-        $model->ip_gateway = $information['ip_gateway'];
-        $model->hos_code = $information['hos_code'];
-        $model->hos_name = $information['hos_name'];
-        $model->data_json = json_encode([
-            'infomation' => $data['infomation'],
-            'data' => $data['items']
-        ],JSON_UNESCAPED_UNICODE);
-        return $model->save();
-}
+
 
     public function index(Request $request){
         $hos_code = $request->hos_code;
 
         return response()->json([
+            'person' => $this->personSummary($hos_code),
             'infomation' => [
                 'labels' => 'ข้อมูลพื้นฐาน',
                 'branchs' => $this->branch($hos_code),
                 'authdaily' => $this->authDaily($hos_code),
             ],
-            'assets' => $this->assetsSummary($hos_code),
-            'person' => $this->personSummary($hos_code),
+            'assets' => $this->assetsSummary($hos_code)
         ]);
     }
+
+    // สรุปข้อมูลครุภัณฑ์
+    private function assetsSummary($hos_code){
+        // $items = Assets::all();
+        $items = $hos_code ? Assets::where(['HOS_CODE' => $hos_code])->get() : Assets::limit(10);
+        return [
+            'items' => 'ข้อมูลทรัพย์สิน',
+            'total' => $items->count(),
+            'datasets' => $this->assetDataset(),
+            'items' => $items
+        ];
+    }
+// สรุปข้อมูลบุคลากร
+    private function assetDataset($hos_code = null){
+        return Assets::limit(1);
+    }
+
+ // สรุปข้อมูลบุคลากร
+    private function personSummary($hos_code){
+        $items = $hos_code ? Persons::where(['HOS_CODE' => $hos_code])->get() : Persons::all();
+        return [
+            'datasets' => $this->personDataset(),
+            'items' => 'ข้อมูลบุคลากร',
+            'total' => $items->count(),
+            'items' => $items
+        ];
+    }
+// สรุปข้อมูลบุคลากร
+private function personDataset($hos_code = null){
+    // $item = DB::table(DB::raw('persons as p1'))
+    // ->groupBy(DB::raw('HOS_CODE'))
+    // ->select(['HOS_CODE','HOS_NAME'])
+    // ->selectRaw("(SELECT count(p2.HOS_CODE) FROM persons p2 WHERE p2.HOS_CODE = p1.HOS_CODE AND HR_PERSON_TYPE_NAME = 'ข้าราชการ') as type1")
+    // ->selectRaw("(SELECT count(p2.HOS_CODE) FROM persons p2 WHERE p2.HOS_CODE = p1.HOS_CODE AND HR_PERSON_TYPE_NAME = 'ลูกจ้างประจำ') as type2")
+    // // ->limit(10)
+    // ->get();
+
+    // $sql = "SELECT 
+    // p1.HOS_CODE,p1.HOS_NAME,p1.HR_PERSON_TYPE_NAME,
+    // (SELECT count(p2.HOS_CODE) FROM persons p2 WHERE p2.HOS_CODE = p1.HOS_CODE AND HR_PERSON_TYPE_NAME = 'ข้าราชการ') as type1,
+    // (SELECT count(p2.HOS_CODE) FROM persons p2 WHERE p2.HOS_CODE = p1.HOS_CODE AND HR_PERSON_TYPE_NAME = 'ลูกจ้างประจำ') as type2
+    //  FROM persons p1
+    //  GROUP BY p1.HOS_CODE";
+
+    $query = Persons::select('HOS_NAME','HR_PERSON_TYPE_NAME','HOS_CODE',DB::raw('COUNT(HOS_NAME) as total'))
+    ->groupBy('HOS_NAME')
+    ->get();
+
+    $data = [];
+    foreach ($query as $sub){
+        // $data['label'][] = $sub->HOS_NAME;
+        // // $data['data'][] = (int) $sub->total;
+        // $data['data'][] =  Persons::where('HOS_CODE','=',$sub->HOS_CODE)->where('HR_PERSON_TYPE_NAME','=',$sub->HR_PERSON_TYPE_NAME)->count();
+        $data[] = [
+            'label' => $sub->HOS_NAME,
+            'type_name' => $sub->HR_PERSON_TYPE_NAME,
+            'data' => Persons::where('HOS_CODE','=',$sub->HOS_CODE)->where('HR_PERSON_TYPE_NAME','=',$sub->HR_PERSON_TYPE_NAME)->count()
+        ];
+    }
+    // return $item;
+    return $data;
+}
+
+private function dataItem(){
+
+}
+
+
 
 private function branch(){
     $item = [];
@@ -81,28 +135,7 @@ private function summeryAsset($id){
         ->groupBy('hos_name')
         ->get();
     }
-    // สรุปข้อมูลครุภัณฑ์
-    private function assetsSummary($hos_code){
-        
-
-        // $items = Assets::all();
-        $items = $hos_code ? Assets::where(['HOS_CODE' => $hos_code])->get() : Assets::all();
-        return [
-            'items' => 'ข้อมูลทรัพย์สิน',
-            'total' => $items->count(),
-            'items' => $items
-        ];
-    }
- // สรุปข้อมูลบุคลากร
-    private function personSummary($hos_code){
-        $items = $hos_code ? Persons::where(['HOS_CODE' => $hos_code])->get() : Persons::all();
-        return [
-            'items' => 'ข้อมูลบุคลากร',
-            'total' => $items->count(),
-            'items' => $items
-        ];
-    }
-
+    
 
     //นับจำนวน record ตามหน่วยบริการ
     public function summaryClient(Request $request){
@@ -209,6 +242,22 @@ private function summeryAsset($id){
         return response()->json($data, 200);
     }
 
-
+// เก็บ logs
+private function updateLog($type,$data){
+    $information = $data['infomation'];
+    $model = new Logs;
+    $model->type = $type;
+    $model->user_id = $information['user_id'];
+    $model->username = $information['username'];
+    $model->ip_client = $information['ip_client'];
+    $model->ip_gateway = $information['ip_gateway'];
+    $model->hos_code = $information['hos_code'];
+    $model->hos_name = $information['hos_name'];
+    $model->data_json = json_encode([
+        'infomation' => $data['infomation'],
+        'data' => $data['items']
+    ],JSON_UNESCAPED_UNICODE);
+    return $model->save();
+}
 
 }

@@ -30,7 +30,7 @@ class Persons extends Model
         'HR_STATUS_NAME',
         'HR_KIND_NAME',
         'HR_KIND_TYPE_NAME',
-        'hrd_person.HR_PERSON_TYPE_ID',
+        'HR_PERSON_TYPE_ID',
         'HR_PERSON_TYPE_NAME',
         'HR_AGENCY_ID',
         'HR_SALARY',
