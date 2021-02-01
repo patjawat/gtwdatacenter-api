@@ -61,42 +61,66 @@ class DatacenterController extends Controller
     }
 // สรุปข้อมูลบุคลากร
 private function personDataset($hos_code = null){
-    // $item = DB::table(DB::raw('persons as p1'))
-    // ->groupBy(DB::raw('HOS_CODE'))
-    // ->select(['HOS_CODE','HOS_NAME'])
-    // ->selectRaw("(SELECT count(p2.HOS_CODE) FROM persons p2 WHERE p2.HOS_CODE = p1.HOS_CODE AND HR_PERSON_TYPE_NAME = 'ข้าราชการ') as type1")
-    // ->selectRaw("(SELECT count(p2.HOS_CODE) FROM persons p2 WHERE p2.HOS_CODE = p1.HOS_CODE AND HR_PERSON_TYPE_NAME = 'ลูกจ้างประจำ') as type2")
-    // // ->limit(10)
-    // ->get();
 
-    // $sql = "SELECT 
-    // p1.HOS_CODE,p1.HOS_NAME,p1.HR_PERSON_TYPE_NAME,
-    // (SELECT count(p2.HOS_CODE) FROM persons p2 WHERE p2.HOS_CODE = p1.HOS_CODE AND HR_PERSON_TYPE_NAME = 'ข้าราชการ') as type1,
-    // (SELECT count(p2.HOS_CODE) FROM persons p2 WHERE p2.HOS_CODE = p1.HOS_CODE AND HR_PERSON_TYPE_NAME = 'ลูกจ้างประจำ') as type2
-    //  FROM persons p1
-    //  GROUP BY p1.HOS_CODE";
+    // datasets: [
+    //     {
+    //       label: "level of thiccness",
+    //       borderWidth: 4,
+    //       data: [65, 59, 80]
+    //     },
+    //     {
+    //       label: "A",
+    //       borderWidth: 4,
+    //       data: [23, 19, 30]
+    //     }
+    //   ]
 
-    $query = Persons::select('HOS_NAME','HR_PERSON_TYPE_NAME','HOS_CODE',DB::raw('COUNT(HOS_NAME) as total'))
-    ->groupBy('HOS_NAME')
+    $hos =  $query = Persons::select('HOS_CODE','HOS_NAME')
+    ->groupBy('HOS_CODE')
     ->get();
 
+    $main = Persons::select('HOS_CODE','HOS_NAME')
+    ->groupBy('HOS_CODE')
+    ->get();
+
+
     $data = [];
+ 
+    foreach ($main as $key => $value){
+        $data['label'][] = $value->HOS_NAME;
+        $data['data'] = $this->subType($value->HOS_CODE, $value->HR_PERSON_TYPE_NAME);
+    }
+    return  $data;
+}
+private function subType($HOS_CODE,$TYPE){
+    $data = [];
+    $query = Persons::select('HOS_CODE','HR_PERSON_TYPE_NAME')
+    ->groupBy('HR_PERSON_TYPE_NAME')
+    ->get();
+
     foreach ($query as $sub){
-        // $data['label'][] = $sub->HOS_NAME;
-        // // $data['data'][] = (int) $sub->total;
-        // $data['data'][] =  Persons::where('HOS_CODE','=',$sub->HOS_CODE)->where('HR_PERSON_TYPE_NAME','=',$sub->HR_PERSON_TYPE_NAME)->count();
         $data[] = [
-            'label' => $sub->HOS_NAME,
-            'type_name' => $sub->HR_PERSON_TYPE_NAME,
-            'data' => Persons::where('HOS_CODE','=',$sub->HOS_CODE)->where('HR_PERSON_TYPE_NAME','=',$sub->HR_PERSON_TYPE_NAME)->count()
+            'label' =>$sub->HR_PERSON_TYPE_NAME,
+            'data' => $this->subDataType($sub->HR_PERSON_TYPE_NAME)
         ];
     }
-    // return $item;
+
     return $data;
 }
 
-private function dataItem(){
+private function subDataType($data){
 
+    $main = Persons::select('HOS_CODE','HOS_NAME')
+    ->groupBy('HOS_CODE')
+    ->get();
+ 
+    $total = [];
+    foreach ($main as $key => $value){
+        $total[] = Persons::select('HOS_CODE')
+        ->where('HR_PERSON_TYPE_NAME','=',$data)
+        ->where('HOS_CODE','=',$value->HOS_CODE)->count();
+    }
+    return $total;
 }
 
 
