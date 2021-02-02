@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariaDB
--- Generation Time: Jan 21, 2021 at 11:58 AM
+-- Generation Time: Feb 02, 2021 at 04:35 AM
 -- Server version: 10.5.8-MariaDB-1:10.5.8+maria~focal
--- PHP Version: 7.4.13
+-- PHP Version: 7.4.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -52,7 +52,7 @@ INSERT INTO `branchs` (`hos_code`, `name`, `service_plan`, `province`, `url`, `c
 ('11194', 'รพ.แม่สาย', 'M2', 'เชียงราย', '', NULL, NULL),
 ('11196', 'รพ.เวียงป่าเป้า', 'F1', 'เชียงราย', '', NULL, NULL),
 ('11205', 'รพ.แม่สะเรียง', 'M2', 'แม่ฮ่องสอน', '', NULL, NULL),
-('11454', 'รพ.สมเด็จพระยุพราชเชียงของ', '', 'เชียงราย', '', NULL, NULL),
+('11454', 'รพ.สมเด็จพระยุพราชเชียงของ', 'F1', 'เชียงราย', '', NULL, NULL),
 ('28823', 'รพ.ดอยหลวง', 'F3', 'เชียงราย', '', NULL, NULL),
 ('40744', 'รพ.ภูซาง', 'F3', 'พะเยา', '', NULL, NULL),
 ('40745', 'รพ.ภูกามยาว', 'F3', 'พะเยา', '', NULL, NULL);

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Logs;
 use App\Models\Branch;
+use App\Models\BranchGroup;
 use App\Models\Assets;
 use App\Models\PersonGroup;
 use App\Models\PersonWork;
@@ -32,6 +33,7 @@ class DatacenterController extends Controller
             'assets' => $this->assetsSummary($hos_code)
         ]);
     }
+    
 
     // สรุปข้อมูลครุภัณฑ์
     private function assetsSummary($hos_code){
@@ -53,27 +55,51 @@ class DatacenterController extends Controller
     private function personSummary($hos_code){
         $items = $hos_code ? Persons::where(['HOS_CODE' => $hos_code])->get() : Persons::all();
         return [
+            'branchgroup' => $this->branchGroup(),
             'datasets' => $this->personDataset(),
             'items' => 'ข้อมูลบุคลากร',
             'total' => $items->count(),
             'items' => $items
         ];
     }
+
+private function branchGroup($hos_code = null){
+
+
+    $querys = Branch::groupBy('province')->get();
+    $data = [];
+
+    foreach ($querys as $key => $value){
+        $data['label'][] = $value->province;
+        $data['data'] = $this->subProvince($value);
+    }
+    return  $data;
+    
+    $data = [];
+
+}
+
+private function subProvince($value){
+    $data = [];
+    // $query = Persons::select('HOS_CODE','HR_PERSON_TYPE_NAME')
+    // // ->where('province','=',$province)
+    // // ->groupBy('HR_PERSON_TYPE_NAME')
+    // ->get();
+
+    // foreach ($value as $sub){
+    //     $data[] = [
+    //         'label' =>$sub->id,
+    //         // 'data' => $this->subDataType($sub->HR_PERSON_TYPE_NAME)
+    //     ];
+    // }
+
+    return $value;
+}
+
+
+
 // สรุปข้อมูลบุคลากร
 private function personDataset($hos_code = null){
-
-    // datasets: [
-    //     {
-    //       label: "level of thiccness",
-    //       borderWidth: 4,
-    //       data: [65, 59, 80]
-    //     },
-    //     {
-    //       label: "A",
-    //       borderWidth: 4,
-    //       data: [23, 19, 30]
-    //     }
-    //   ]
 
     $hos =  $query = Persons::select('HOS_CODE','HOS_NAME')
     ->groupBy('HOS_CODE')
