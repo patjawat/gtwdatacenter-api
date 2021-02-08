@@ -15,7 +15,7 @@ class CreatePersonsTable extends Migration
     {
         Schema::create('persons', function (Blueprint $table) {
             $table->id();
-            $table->String('HOS_CODE')->comment('รหัสโรงพยาบาล');
+            $table->String('HOSPCODE')->comment('รหัสโรงพยาบาล');
             $table->String('HOS_NAME')->comment('ชื่อโรงพยาบาล');
             $table->String('HR_CID')->comment('เลขบัตรแระชาชน');
             $table->String('SEX')->comment('เพศ');

@@ -19,7 +19,7 @@ class CreateLogsTable extends Migration
             $table->String('type')->nullable();
             $table->integer('user_id')->nullable();
             $table->String('username')->nullable();
-            $table->String('hos_code')->nullable();
+            $table->String('hospcode')->nullable();
             $table->String('hos_name')->nullable();
             $table->String('ip_gateway')->nullable();
             $table->String('ip_client')->nullable();

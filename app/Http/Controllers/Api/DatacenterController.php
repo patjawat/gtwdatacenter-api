@@ -66,17 +66,39 @@ class DatacenterController extends Controller
 private function branchGroup($hos_code = null){
 
 
-    $querys = Branch::groupBy('province')->get();
+    $querys = Branch::select('province', DB::raw("GROUP_CONCAT(hos_code SEPARATOR '","')"))->groupBy('province')->toSql();
+
     $data = [];
 
-    foreach ($querys as $key => $value){
-        $data['label'][] = $value->province;
-        $data['data'] = $this->subProvince($value);
-    }
-    return  $data;
+    // foreach ($querys as $key => $value){
+    //     $arr[] = $value->hos_code;
+    //     $data[] = [
+    //         'province' => $value->province,
+    //         // 'person-total' => Persons::whereIn('HOS_CODE', $value->hos_code)->toSql(),
+    //         'person-total' => $this->test1($value->hos_code),
+    //         'asset-total' => $value->province,
+    //     ];
+    //     // $data['hos_code'][] = $value->hos_code;
+    //     // $data['data'] = $this->subProvince($value);
+    // }
+    // return  $data;
+    return  $querys;
     
     $data = [];
 
+}
+
+private function test1($data){
+//     $data = [];
+//     foreach($arr as $key => $value){
+//         $data[] = $value;
+//     }
+//    return $data;
+// $data = explore('"',$arr);
+$arr = [];
+return $arr[] = $data;
+
+// return "<ul><li>" . implode("</li><li>", $arr) . "</li></ul>";
 }
 
 private function subProvince($value){

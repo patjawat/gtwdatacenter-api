@@ -15,7 +15,7 @@ class CreateAssetsTable extends Migration
     {
         Schema::create('assets',function (Blueprint $table) {
             $table->id();
-            $table->String('HOS_CODE')->comment('รหัสโรงพยาบาล');
+            $table->String('HOSPCODE')->comment('รหัสโรงพยาบาล');
             $table->String('HOS_NAME')->comment('ชื่อโรงพยาบาล');
             $table->String('GROUP_CLASS_CODE')->nullable();
             $table->String('GROUP_CODE')->nullable();

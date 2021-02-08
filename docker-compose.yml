@@ -50,6 +50,7 @@ services:
       MYSQL_USERNAME: root
       MYSQL_ROOT_PASSWORD: docker
       PMA_HOST: mariaDB
+      UPLOAD_LIMIT: 300M
 
   # phpmyadmin_mysql:
   #   image: phpmyadmin/phpmyadmin
