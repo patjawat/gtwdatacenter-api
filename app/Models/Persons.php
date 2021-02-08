@@ -9,7 +9,7 @@ class Persons extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'HOS_CODE',
+        'HOSPCODE',
         'HOS_NAME',
         'HR_FNAME',
         'HR_LNAME',
