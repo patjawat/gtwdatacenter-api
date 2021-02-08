@@ -21,24 +21,24 @@ class DatacenterController extends Controller
 
 
     public function index(Request $request){
-        $hos_code = $request->hos_code;
+        $hospcode = $request->hospcode;
 
         return response()->json([
-            'person' => $this->personSummary($hos_code),
+            'person' => $this->personSummary($hospcode),
             'infomation' => [
                 'labels' => 'ข้อมูลพื้นฐาน',
-                'branchs' => $this->branch($hos_code),
-                'authdaily' => $this->authDaily($hos_code),
+                'branchs' => $this->branch($hospcode),
+                // 'authdaily' => $this->authDaily($hospcode),
             ],
-            'assets' => $this->assetsSummary($hos_code)
+            'assets' => $this->assetsSummary($hospcode)
         ]);
     }
     
 
     // สรุปข้อมูลครุภัณฑ์
-    private function assetsSummary($hos_code){
+    private function assetsSummary($hospcode){
         // $items = Assets::all();
-        $items = $hos_code ? Assets::where(['HOS_CODE' => $hos_code])->get() : Assets::limit(10);
+        $items = $hospcode ? Assets::where(['HOSPCODE' => $hospcode])->get() : Assets::limit(10);
         return [
             'items' => 'ข้อมูลทรัพย์สิน',
             'total' => $items->count(),
@@ -47,13 +47,13 @@ class DatacenterController extends Controller
         ];
     }
 // สรุปข้อมูลบุคลากร
-    private function assetDataset($hos_code = null){
+    private function assetDataset($hospcode = null){
         return Assets::limit(1);
     }
 
  // สรุปข้อมูลบุคลากร
-    private function personSummary($hos_code){
-        $items = $hos_code ? Persons::where(['HOS_CODE' => $hos_code])->get() : Persons::all();
+    private function personSummary($hospcode){
+        $items = $hospcode ? Persons::where(['HOSPCODE' => $hospcode])->get() : Persons::all();
         return [
             'branchgroup' => $this->branchGroup(),
             'datasets' => $this->personDataset(),
@@ -63,22 +63,22 @@ class DatacenterController extends Controller
         ];
     }
 
-private function branchGroup($hos_code = null){
+private function branchGroup($hospcode = null){
 
 
-    $querys = Branch::select('province', DB::raw("GROUP_CONCAT(hos_code SEPARATOR '","')"))->groupBy('province')->toSql();
+    $querys = Branch::select('province', DB::raw("GROUP_CONCAT(hospcode SEPARATOR '","')"))->groupBy('province')->toSql();
 
     $data = [];
 
     // foreach ($querys as $key => $value){
-    //     $arr[] = $value->hos_code;
+    //     $arr[] = $value->hospcode;
     //     $data[] = [
     //         'province' => $value->province,
-    //         // 'person-total' => Persons::whereIn('HOS_CODE', $value->hos_code)->toSql(),
-    //         'person-total' => $this->test1($value->hos_code),
+    //         // 'person-total' => Persons::whereIn('HOSPCODE', $value->hospcode)->toSql(),
+    //         'person-total' => $this->test1($value->hospcode),
     //         'asset-total' => $value->province,
     //     ];
-    //     // $data['hos_code'][] = $value->hos_code;
+    //     // $data['HOSPCODE'][] = $value->hospcode;
     //     // $data['data'] = $this->subProvince($value);
     // }
     // return  $data;
@@ -103,7 +103,7 @@ return $arr[] = $data;
 
 private function subProvince($value){
     $data = [];
-    // $query = Persons::select('HOS_CODE','HR_PERSON_TYPE_NAME')
+    // $query = Persons::select('HOSPCODE','HR_PERSON_TYPE_NAME')
     // // ->where('province','=',$province)
     // // ->groupBy('HR_PERSON_TYPE_NAME')
     // ->get();
@@ -121,14 +121,14 @@ private function subProvince($value){
 
 
 // สรุปข้อมูลบุคลากร
-private function personDataset($hos_code = null){
+private function personDataset($hospcode = null){
 
-    $hos =  $query = Persons::select('HOS_CODE','HOS_NAME')
-    ->groupBy('HOS_CODE')
+    $hos =  $query = Persons::select('HOSPCODE','HOS_NAME')
+    ->groupBy('HOSPCODE')
     ->get();
 
-    $main = Persons::select('HOS_CODE','HOS_NAME')
-    ->groupBy('HOS_CODE')
+    $main = Persons::select('HOSPCODE','HOS_NAME')
+    ->groupBy('HOSPCODE')
     ->get();
 
 
@@ -136,13 +136,13 @@ private function personDataset($hos_code = null){
  
     foreach ($main as $key => $value){
         $data['label'][] = $value->HOS_NAME;
-        $data['data'] = $this->subType($value->HOS_CODE, $value->HR_PERSON_TYPE_NAME);
+        $data['data'] = $this->subType($value->hospcode, $value->HR_PERSON_TYPE_NAME);
     }
     return  $data;
 }
-private function subType($HOS_CODE,$TYPE){
+private function subType($hospcode,$TYPE){
     $data = [];
-    $query = Persons::select('HOS_CODE','HR_PERSON_TYPE_NAME')
+    $query = Persons::select('HOSPCODE','HR_PERSON_TYPE_NAME')
     ->groupBy('HR_PERSON_TYPE_NAME')
     ->get();
 
@@ -158,15 +158,15 @@ private function subType($HOS_CODE,$TYPE){
 
 private function subDataType($data){
 
-    $main = Persons::select('HOS_CODE','HOS_NAME')
-    ->groupBy('HOS_CODE')
+    $main = Persons::select('HOSPCODE','HOS_NAME')
+    ->groupBy('HOSPCODE')
     ->get();
  
     $total = [];
     foreach ($main as $key => $value){
-        $total[] = Persons::select('HOS_CODE')
+        $total[] = Persons::select('HOSPCODE')
         ->where('HR_PERSON_TYPE_NAME','=',$data)
-        ->where('HOS_CODE','=',$value->HOS_CODE)->count();
+        ->where('HOSPCODE','=',$value->hospcode)->count();
     }
     return $total;
 }
@@ -178,30 +178,30 @@ private function branch(){
     foreach (Branch::all() as $branch)
     {
         $item[] = [
-            'hos_code' => $branch->hos_code,
+            'HOSPCODE' => $branch->hospcode,
             'name' => $branch->name,
             'service_plan' => $branch->service_plan,
-            // 'summaryAsset' => $this->summeryAsset($branch->hos_code),
-            // 'summaryPerson' => $this->summeryPerson($branch->hos_code)
+            // 'summaryAsset' => $this->summeryAsset($branch->hospcode),
+            // 'summaryPerson' => $this->summeryPerson($branch->hospcode)
         ];
     }
 
 
     return [
-        'total' => $branch->count(),
+        // 'total' => $branch->count(),
         'items' =>  $item
     ];
 }
 
 private function summeryAsset($id){
-    return Assets::where(['hos_code' => $id])->count();
+    return Assets::where(['HOSPCODE' => $id])->count();
 }
 
 
 // การเข้าใช้งานประจำวัน
     private function authDaily(){
         return DB::table('logs')
-        ->select('hos_name', DB::raw('COUNT(hos_code) as total'))
+        ->select('hos_name', DB::raw('COUNT(hoscode) as total'))
         ->where('created_at', 'like', date('Y-m-d').'%')
         ->where('type', '=','login')
         ->groupBy('hos_name')
@@ -212,8 +212,8 @@ private function summeryAsset($id){
     //นับจำนวน record ตามหน่วยบริการ
     public function summaryClient(Request $request){
         return response()->json([
-            'assets' => Assets::where('HOS_CODE','=',$request->hos_code)->count(),
-            'person' => Persons::where('HOS_CODE','=',$request->hos_code)->count()
+            'assets' => Assets::where('HOSPCODE','=',$request->hospcode)->count(),
+            'person' => Persons::where('HOSPCODE','=',$request->hospcode)->count()
         ]);
     }
 
@@ -229,7 +229,7 @@ private function summeryAsset($id){
         $this->updateLog('update-person',$request);
        
         foreach($request->items as $key => $value){
-            Persons::updateOrCreate(['HOS_CODE' =>  $value['HOS_CODE'],'HOS_NAME' =>$value['HOS_NAME'],'HR_CID' => $value['HR_CID'], ],
+            Persons::updateOrCreate(['HOSPCODE' =>  $value['hospcode'],'HOS_NAME' =>$value['HOS_NAME'],'HR_CID' => $value['HR_CID'], ],
                 [
                     'HR_FNAME'=> $value['HR_FNAME'],
                     'HR_LNAME'=> $value['HR_LNAME'],
@@ -271,7 +271,7 @@ private function summeryAsset($id){
         $data = '';
         foreach($request->items as $key => $value){
  
-        $data = Assets::updateOrCreate(['HOS_CODE' =>  $value['HOS_CODE'],'ARTICLE_NUM' => $value['ARTICLE_NUM']],
+        $data = Assets::updateOrCreate(['HOSPCODE' =>  $value['hospcode'],'ARTICLE_NUM' => $value['ARTICLE_NUM']],
            [
             'HOS_NAME' => $value['HOS_NAME'],
             'GROUP_CLASS_CODE' => $value['GROUP_CLASS_CODE'],
@@ -323,7 +323,7 @@ private function updateLog($type,$data){
     $model->username = $information['username'];
     $model->ip_client = $information['ip_client'];
     $model->ip_gateway = $information['ip_gateway'];
-    $model->hos_code = $information['hos_code'];
+    $model->hospcode = $information['hospcode'];
     $model->hos_name = $information['hos_name'];
     $model->data_json = json_encode([
         'infomation' => $data['infomation'],

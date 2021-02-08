@@ -9,13 +9,13 @@ class Assets extends Model
 {
     use HasFactory;
     // protected $primaryKey = ['asset_number'];
-    // protected $primaryKey = ['hos_code', 'asset_number'];
+    // protected $primaryKey = ['HOSPCODE', 'asset_number'];
     protected $fillable = [
         'GROUP_CLASS_CODE',
         'TYPE_CODE',
         'GROUP_CODE',
         'NUM',
-        'HOS_CODE',
+        'HOSPCODE',
         'HOS_NAME',
         'TYPE_SUB_ID',
         'ARTICLE_NUM',
