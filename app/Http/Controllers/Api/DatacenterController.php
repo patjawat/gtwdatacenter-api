@@ -294,7 +294,7 @@ private function summeryAsset($id){
             'BUY_NAME' => $value['BUY_NAME'],
             'BUDGET_NAME' => $value['BUDGET_NAME'],
             // 'SUP_TYPE_NAME' => $value['SUP_TYPE_NAME'],
-            'DECLINE_NAME' => $value['DECLINE_NAME'],
+            // 'DECLINE_NAME' => $value['DECLINE_NAME'],
             'VENDOR_NAME' => $value['VENDOR_NAME'],
             'HR_DEPARTMENT_SUB_NAME' => $value['HR_DEPARTMENT_SUB_NAME'],
             'LOCATION_NAME' => $value['LOCATION_NAME'],
