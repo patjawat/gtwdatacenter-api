@@ -264,7 +264,7 @@ private function summeryAsset($id){
 
     //นำเข้าข้อมูลทรัพสิน
     public function importAsset(Request $request){
-        $this->updateLog('update-asset',$request);
+        // $this->updateLog('update-asset',$request);
 
         $value = $request;
         $data = Assets::updateOrCreate(['HOSPCODE' =>  $value['HOSPCODE'],'ARTICLE_NUM' => $value['ARTICLE_NUM']],
