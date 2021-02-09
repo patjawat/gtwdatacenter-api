@@ -269,11 +269,11 @@ private function summeryAsset($id){
         $value = $request;
         $data = Assets::updateOrCreate(['HOSPCODE' =>  $value['HOSPCODE'],'ARTICLE_NUM' => $value['ARTICLE_NUM']],
 
-            ['HOS_NAME' => $value['HOS_NAME'],
-            'GROUP_CLASS_CODE' => $value['GROUP_CLASS_CODE'],
-            'TYPE_CODE' => $value['TYPE_CODE'],
-            'GROUP_CODE' => $value['GROUP_CODE'],
-            'NUM' => $value['NUM'],
+            ['HOS_NAME' => isset($value['HOS_NAME']) ? $value['HOS_NAME'] : NULL ,
+            'GROUP_CLASS_CODE' => isset($value['GROUP_CLASS_CODE'] ) ? $value['GROUP_CLASS_CODE'] : NULL,
+            'TYPE_CODE' => isset($value['TYPE_CODE']) ? $value['TYPE_CODE'] : NULL,
+            'GROUP_CODE' => isset($value['GROUP_CODE'] ) ? $value['GROUP_CODE'] : NULL,
+            'NUM' => isset($value['NUM'] ) ? $value['NUM'] : NULL,
             'TYPE_SUB_ID' => isset($value['TYPE_SUB_ID']) ? $value['TYPE_SUB_ID'] : NULL,
             'YEAR_ID' => isset($value['YEAR_ID']) ? $value['YEAR_ID'] : NULL,
             'ARTICLE_NAME' => isset($value['ARTICLE_NAME'] ) ? $value['ARTICLE_NAME'] : NULL,
