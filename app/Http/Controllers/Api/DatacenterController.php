@@ -226,7 +226,7 @@ private function summeryAsset($id){
     // สรุปข้อมูลพนักงาน
     public function importPerson(Request $request){
         // เก็บ logs ###
-        $this->updateLog('update-person',$request);
+        // $this->updateLog('update-person',$request);
        $value = $request;
         // foreach($request->items as $key => $value){
             $data = Persons::updateOrCreate(['HOSPCODE' =>  $value['HOSPCODE'],'HOS_NAME' =>$value['HOS_NAME'],'HR_CID' => $value['HR_CID'], ],
