@@ -264,7 +264,7 @@ private function summeryAsset($id){
 
     //นำเข้าข้อมูลทรัพสิน
     public function importAsset(Request $request){
-        // $this->updateLog('update-asset',$request);
+        $this->updateLog('update-asset',$request);
 
         $value = $request;
         $data = Assets::updateOrCreate(['HOSPCODE' =>  $value['HOSPCODE'],'ARTICLE_NUM' => $value['ARTICLE_NUM']],
@@ -310,19 +310,15 @@ private function summeryAsset($id){
 
 // เก็บ logs
 private function updateLog($type,$data){
-    $information = $data['infomation'];
     $model = new Logs;
     $model->type = $type;
-    $model->user_id = $information['user_id'];
-    $model->username = $information['username'];
-    $model->ip_client = $information['ip_client'];
-    $model->ip_gateway = $information['ip_gateway'];
-    $model->hospcode = $information['hospcode'];
-    $model->hos_name = $information['hos_name'];
-    $model->data_json = json_encode([
-        'infomation' => $data['infomation'],
-        'data' => $data['items']
-    ],JSON_UNESCAPED_UNICODE);
+    // $model->user_id = $information['user_id'];
+    // $model->username = $information['username'];
+    // $model->ip_client = $information['ip_client'];
+    // $model->ip_gateway = $information['ip_gateway'];
+    // $model->hospcode = $information['hospcode'];
+    // $model->hos_name = $information['hos_name'];
+    $model->data_json = json_encode($data,JSON_UNESCAPED_UNICODE);
     return $model->save();
 }
 
