@@ -52,6 +52,19 @@ services:
       PMA_HOST: mariaDB
       UPLOAD_LIMIT: 300M
 
+  phpmyadmin_clound:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - 8300:80
+    environment:
+      PMA_USER: gotowin
+      PMA_PASSWORD: Fdm^;bog-91
+      MYSQL_USERNAME: gotowin
+      MYSQL_ROOT_PASSWORD: Fdm^;bog-91
+      PMA_HOST: 27.254.191.157
+      UPLOAD_LIMIT: 300M
+
   # phpmyadmin_mysql:
   #   image: phpmyadmin/phpmyadmin
   #   links:
