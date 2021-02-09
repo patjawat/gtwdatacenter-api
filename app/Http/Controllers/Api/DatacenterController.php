@@ -226,7 +226,6 @@ private function summeryAsset($id){
     // สรุปข้อมูลพนักงาน
     public function importPerson(Request $request){
         // เก็บ logs ###
-        $this->updateLog('update-person',$request);
        $value = $request;
         // foreach($request->items as $key => $value){
             $data = Persons::updateOrCreate(['HOSPCODE' =>  $value['HOSPCODE'],'HOS_NAME' =>$value['HOS_NAME'],'HR_CID' => $value['HR_CID'], ],
@@ -257,6 +256,7 @@ private function summeryAsset($id){
                     'MONEY_POSITION'=> $value['MONEY_POSITION'],
             ]); 
         // }
+        $this->updateLog('update-person',$data);
         
         return response()->json($data, 200);        
 
@@ -264,7 +264,7 @@ private function summeryAsset($id){
 
     //นำเข้าข้อมูลทรัพสิน
     public function importAsset(Request $request){
-        $this->updateLog('update-asset',$request);
+       
 
         $value = $request;
         $data = Assets::updateOrCreate(['HOSPCODE' =>  $value['HOSPCODE'],'ARTICLE_NUM' => $value['ARTICLE_NUM']],
@@ -305,11 +305,13 @@ private function summeryAsset($id){
             'RISK_TYPE_NAME' => isset($value['RISK_TYPE_NAME'] ) ? $value['RISK_TYPE_NAME'] : NULL
            ]
         );
+        $this->updateLog('update-asset',$data);
         return response()->json($data, 200);
     }
 
 // เก็บ logs
 private function updateLog($type,$data){
+    $information = $data['infomation'];
     $model = new Logs;
     $model->type = $type;
     // $model->user_id = $information['user_id'];
@@ -318,7 +320,9 @@ private function updateLog($type,$data){
     // $model->ip_gateway = $information['ip_gateway'];
     // $model->hospcode = $information['hospcode'];
     // $model->hos_name = $information['hos_name'];
-    $model->data_json = json_encode($data,JSON_UNESCAPED_UNICODE);
+    $model->data_json = json_encode([
+        'data' => $data
+    ],JSON_UNESCAPED_UNICODE);
     return $model->save();
 }
 
