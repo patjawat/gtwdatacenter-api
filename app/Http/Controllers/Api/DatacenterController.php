@@ -227,9 +227,9 @@ private function summeryAsset($id){
     public function importPerson(Request $request){
         // เก็บ logs ###
         $this->updateLog('update-person',$request);
-       
-        foreach($request->items as $key => $value){
-            Persons::updateOrCreate(['HOSPCODE' =>  $value['hospcode'],'HOS_NAME' =>$value['HOS_NAME'],'HR_CID' => $value['HR_CID'], ],
+       $value = $request;
+        // foreach($request->items as $key => $value){
+            $data = Persons::updateOrCreate(['HOSPCODE' =>  $value['HOSPCODE'],'HOS_NAME' =>$value['HOS_NAME'],'HR_CID' => $value['HR_CID'], ],
                 [
                     'HR_FNAME'=> $value['HR_FNAME'],
                     'HR_LNAME'=> $value['HR_LNAME'],
@@ -256,61 +256,55 @@ private function summeryAsset($id){
                     'HR_SALARY'=> $value['HR_SALARY'],
                     'MONEY_POSITION'=> $value['MONEY_POSITION'],
             ]); 
-        }
+        // }
         
-        return response()->json($request, 200);        
+        return response()->json($data, 200);        
 
     }
 
     //นำเข้าข้อมูลทรัพสิน
     public function importAsset(Request $request){
-
-        // $infomation = $request->infomation;
         $this->updateLog('update-asset',$request);
 
-        $data = '';
-        foreach($request->items as $key => $value){
- 
-        $data = Assets::updateOrCreate(['HOSPCODE' =>  $value['hospcode'],'ARTICLE_NUM' => $value['ARTICLE_NUM']],
-           [
-            'HOS_NAME' => $value['HOS_NAME'],
+        $value = $request;
+        $data = Assets::updateOrCreate(['HOSPCODE' =>  $value['HOSPCODE'],'ARTICLE_NUM' => $value['ARTICLE_NUM']],
+
+            ['HOS_NAME' => $value['HOS_NAME'],
             'GROUP_CLASS_CODE' => $value['GROUP_CLASS_CODE'],
             'TYPE_CODE' => $value['TYPE_CODE'],
             'GROUP_CODE' => $value['GROUP_CODE'],
             'NUM' => $value['NUM'],
-            'TYPE_SUB_ID' => $value['TYPE_SUB_ID'],
-            'YEAR_ID' => $value['YEAR_ID'],
-            'ARTICLE_NAME' => $value['ARTICLE_NAME'],
-            'ARTICLE_PROP' => $value['ARTICLE_PROP'],
-            'SUP_UNIT_NAME' => $value['SUP_UNIT_NAME'],
-            'SERIAL_NO' => $value['SERIAL_NO'],
-            'BRAND_NAME' => $value['BRAND_NAME'],
-            'COLOR_NAME' => $value['COLOR_NAME'],
-            'MODEL_NAME' => $value['MODEL_NAME'],
-            'SIZE_NAME' => $value['SIZE_NAME'],
-            'PRICE_PER_UNIT' => $value['PRICE_PER_UNIT'],
-            'RECEIVE_DATE' => $value['RECEIVE_DATE'],
-            'METHOD_NAME' => $value['METHOD_NAME'],
-            'BUY_NAME' => $value['BUY_NAME'],
-            'BUDGET_NAME' => $value['BUDGET_NAME'],
-            // 'SUP_TYPE_NAME' => $value['SUP_TYPE_NAME'],
-            // 'DECLINE_NAME' => $value['DECLINE_NAME'],
-            'VENDOR_NAME' => $value['VENDOR_NAME'],
-            'HR_DEPARTMENT_SUB_NAME' => $value['HR_DEPARTMENT_SUB_NAME'],
-            'LOCATION_NAME' => $value['LOCATION_NAME'],
-            'LOCATION_LEVEL_NAME' => $value['LOCATION_LEVEL_NAME'],
-            'LEVEL_ROOM_NAME' => $value['LEVEL_ROOM_NAME'],
-            'REMARK' => $value['REMARK'],
-            'STATUS_NAME' => $value['STATUS_NAME'],
-            'OLD_USE' => $value['OLD_USE'],
-            'EXPIRE_DATE' => $value['EXPIRE_DATE'],
-            'PM_TYPE_NAME' => $value['PM_TYPE_NAME'],
-            'CAL_TYPE_NAME' => $value['CAL_TYPE_NAME'],
-            'RISK_TYPE_NAME' => $value['RISK_TYPE_NAME']
+            'TYPE_SUB_ID' => isset($value['TYPE_SUB_ID']) ? $value['TYPE_SUB_ID'] : NULL,
+            'YEAR_ID' => isset($value['YEAR_ID']) ? $value['YEAR_ID'] : NULL,
+            'ARTICLE_NAME' => isset($value['ARTICLE_NAME'] ) ? $value['ARTICLE_NAME'] : NULL,
+            'ARTICLE_PROP' => isset($value['ARTICLE_PROP'] ) ? $value['ARTICLE_PROP'] : NULL,
+            'SUP_UNIT_NAME' => isset($value['SUP_UNIT_NAME'] ) ? $value['SUP_UNIT_NAME'] : NULL,
+            'SERIAL_NO' => isset($value['SERIAL_NO'] ) ? $value['SERIAL_NO'] : NULL,
+            'BRAND_NAME' => isset($value['BRAND_NAME'] ) ? $value['BRAND_NAME'] : NULL,
+            'COLOR_NAME' => isset($value['COLOR_NAME'] ) ? $value['COLOR_NAME'] : NULL,
+            'MODEL_NAME' => isset($value['MODEL_NAME'] ) ? $value['MODEL_NAME'] : NULL,
+            'SIZE_NAME' => isset($value['SIZE_NAME'] ) ? $value['SIZE_NAME'] : NULL,
+            'PRICE_PER_UNIT' => isset($value['PRICE_PER_UNIT'] ) ? $value['PRICE_PER_UNIT'] : NULL,
+            'RECEIVE_DATE' => isset($value['RECEIVE_DATE'] ) ? $value['RECEIVE_DATE'] : NULL,
+            'METHOD_NAME' => isset($value['METHOD_NAME'] ) ? $value['METHOD_NAME'] : NULL,
+            'BUY_NAME' => isset($value['BUY_NAME'] ) ? $value['BUY_NAME'] : NULL,
+            'BUDGET_NAME' => isset($value['BUDGET_NAME'] ) ? $value['BUDGET_NAME'] : NULL,
+            'SUP_TYPE_NAME' => isset($value['SUP_TYPE_NAME']) ? $value['SUP_TYPE_NAME'] : NULL,
+            'DECLINE_NAME' => isset($value['DECLINE_NAME']) ? $value['DECLINE_NAME'] : NULL,
+            'VENDOR_NAME' => isset($value['VENDOR_NAME']) ? $value['VENDOR_NAME'] : NULL,
+            'HR_DEPARTMENT_SUB_NAME' => isset($value['HR_DEPARTMENT_SUB_NAME'] ) ? $value['HR_DEPARTMENT_SUB_NAME'] : NULL,
+            'LOCATION_NAME' => isset($value['LOCATION_NAME'] ) ? $value['LOCATION_NAME'] : NULL,
+            'LOCATION_LEVEL_NAME' => isset($value['LOCATION_LEVEL_NAME'] ) ? $value['LOCATION_LEVEL_NAME'] : NULL,
+            'LEVEL_ROOM_NAME' => isset($value['LEVEL_ROOM_NAME'] ) ? $value['LEVEL_ROOM_NAME'] : NULL,
+            'REMARK' => isset($value['REMARK'] ) ? $value['REMARK'] : NULL,
+            'STATUS_NAME' => isset($value['STATUS_NAME'] ) ? $value['STATUS_NAME'] : NULL,
+            'OLD_USE' => isset($value['OLD_USE'] ) ? $value['OLD_USE'] : NULL,
+            'EXPIRE_DATE' => isset($value['EXPIRE_DATE'] ) ? $value['EXPIRE_DATE'] : NULL,
+            'PM_TYPE_NAME' => isset($value['PM_TYPE_NAME'] ) ? $value['PM_TYPE_NAME'] : NULL,
+            'CAL_TYPE_NAME' => isset($value['CAL_TYPE_NAME'] ) ? $value['CAL_TYPE_NAME'] : NULL,
+            'RISK_TYPE_NAME' => isset($value['RISK_TYPE_NAME'] ) ? $value['RISK_TYPE_NAME'] : NULL
            ]
         );
-    }
-  
         return response()->json($data, 200);
     }
 
