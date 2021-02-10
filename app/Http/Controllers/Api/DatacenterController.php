@@ -15,6 +15,7 @@ use App\Models\PersonWork;
 use App\Models\PersonPosition;
 use App\Models\Persons;
 use App\Models\User;
+use App\Models\Hospcode;
 
 class DatacenterController extends Controller
 {
@@ -24,12 +25,13 @@ class DatacenterController extends Controller
         $hospcode = $request->hospcode;
 
         return response()->json([
-            'person' => $this->personSummary($hospcode),
             'infomation' => [
                 'labels' => 'ข้อมูลพื้นฐาน',
                 'branchs' => $this->branch($hospcode),
                 // 'authdaily' => $this->authDaily($hospcode),
             ],
+            'provincegroup' => $this->ProvinceGroup(),
+            'person' => $this->personSummary($hospcode),
             'assets' => $this->assetsSummary($hospcode)
         ]);
     }
@@ -55,7 +57,6 @@ class DatacenterController extends Controller
     private function personSummary($hospcode){
         $items = $hospcode ? Persons::where(['HOSPCODE' => $hospcode])->get() : Persons::all();
         return [
-            'branchgroup' => $this->branchGroup(),
             'datasets' => $this->personDataset(),
             'items' => 'ข้อมูลบุคลากร',
             'total' => $items->count(),
@@ -63,62 +64,50 @@ class DatacenterController extends Controller
         ];
     }
 
-private function branchGroup($hospcode = null){
+private function ProvinceGroup($hospcode = null){
 
 
-    $querys = Branch::select('province', DB::raw("GROUP_CONCAT(hospcode SEPARATOR '","')"))->groupBy('province')->toSql();
+    $sql = "SELECT CONCAT(xxx.chwpart,'0000')as chwpart,(SELECT name FROM thaiaddress where addressid=CONCAT(xxx.chwpart,'0000'))as name,SUM(xxx.x)as person,SUM(xxx.xx)as asset,SUM(xxx.asset05)as asset05
+    FROM
+    (
+    SELECT hospcode.chwpart,hospcode.hospcode,hospcode.name,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as x,
+    (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as xx,
+        (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode AND GROUP_CLASS_CODE = '0005') as asset05
+    FROM hospcode 
+    WHERE area_code = '01'
+    AND hospital_type_id IN (5,6,7)
+    GROUP BY hospcode.hospcode
+    HAVING x > 0
+    ORDER BY x DESC) as xxx
+    GROUP BY xxx.chwpart";
 
-    $data = [];
 
-    // foreach ($querys as $key => $value){
-    //     $arr[] = $value->hospcode;
-    //     $data[] = [
-    //         'province' => $value->province,
-    //         // 'person-total' => Persons::whereIn('HOSPCODE', $value->hospcode)->toSql(),
-    //         'person-total' => $this->test1($value->hospcode),
-    //         'asset-total' => $value->province,
-    //     ];
-    //     // $data['HOSPCODE'][] = $value->hospcode;
-    //     // $data['data'] = $this->subProvince($value);
-    // }
-    // return  $data;
-    return  $querys;
-    
-    $data = [];
-
-}
-
-private function test1($data){
-//     $data = [];
-//     foreach($arr as $key => $value){
-//         $data[] = $value;
-//     }
-//    return $data;
-// $data = explore('"',$arr);
-$arr = [];
-return $arr[] = $data;
-
-// return "<ul><li>" . implode("</li><li>", $arr) . "</li></ul>";
-}
-
-private function subProvince($value){
-    $data = [];
-    // $query = Persons::select('HOSPCODE','HR_PERSON_TYPE_NAME')
-    // // ->where('province','=',$province)
-    // // ->groupBy('HR_PERSON_TYPE_NAME')
-    // ->get();
-
-    // foreach ($value as $sub){
-    //     $data[] = [
-    //         'label' =>$sub->id,
-    //         // 'data' => $this->subDataType($sub->HR_PERSON_TYPE_NAME)
-    //     ];
-    // }
-
-    return $value;
+    $querys = DB::select($sql);
+    return $querys;
 }
 
 
+public function groupByHospcode(Request $request){
+
+    $sql = "SELECT xxxx.* from
+    (
+    SELECT CONCAT(hospcode.chwpart,'0000')as chwx,
+    (SELECT name FROM thaiaddress where addressid=CONCAT(hospcode.chwpart,'0000'))as ch,
+    hospcode.hospcode,hospcode.name,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as x,
+    (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as xx
+    FROM hospcode 
+    WHERE area_code = '01'
+    AND hospital_type_id IN (5,6,7)
+    GROUP BY hospcode.hospcode
+    HAVING x > 0
+    ORDER BY x DESC) as xxxx
+    where xxxx.chwx=$request->chwpart";
+    $querys = DB::select($sql);
+    // return response()->json($request->chwpart);
+    return response()->json($querys);
+}
 
 // สรุปข้อมูลบุคลากร
 private function personDataset($hospcode = null){

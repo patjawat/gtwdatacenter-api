@@ -44,6 +44,7 @@ Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
         
     Route::apiResource('branchs','BranchController');
     Route::get('datacenter','DatacenterController@index');
+    Route::get('datacenter/groupbyhospcode','DatacenterController@groupByHospcode');
     Route::post('datacenter/summary-client','DatacenterController@summaryClient');
     Route::post('datacenter/import-asset','DatacenterController@importAsset');
     Route::post('datacenter/import-person','DatacenterController@importPerson');
