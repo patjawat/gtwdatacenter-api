@@ -96,7 +96,7 @@ public function groupByHospcode(Request $request){
     (SELECT name FROM thaiaddress where addressid=CONCAT(hospcode.chwpart,'0000'))as ch,
     hospcode.hospcode,hospcode.name,
     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as person,
-    (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as asset
+    (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as asset,
     (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode AND GROUP_CLASS_CODE = '0005') as asset05
 
     FROM hospcode 
