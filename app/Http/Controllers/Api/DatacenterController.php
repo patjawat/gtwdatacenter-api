@@ -95,8 +95,10 @@ public function groupByHospcode(Request $request){
     SELECT CONCAT(hospcode.chwpart,'0000')as chwx,
     (SELECT name FROM thaiaddress where addressid=CONCAT(hospcode.chwpart,'0000'))as ch,
     hospcode.hospcode,hospcode.name,
-    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as x,
-    (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as xx
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as person,
+    (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as asset
+    (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode AND GROUP_CLASS_CODE = '0005') as asset05
+
     FROM hospcode 
     WHERE area_code = '01'
     AND hospital_type_id IN (5,6,7)
