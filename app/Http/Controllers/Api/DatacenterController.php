@@ -10,6 +10,7 @@ use App\Models\Logs;
 use App\Models\Branch;
 use App\Models\BranchGroup;
 use App\Models\Assets;
+use App\Models\Assetbuilding;
 use App\Models\PersonGroup;
 use App\Models\PersonWork;
 use App\Models\PersonPosition;
@@ -184,9 +185,9 @@ private function branch(){
     ];
 }
 
-private function summeryAsset($id){
-    return Assets::where(['HOSPCODE' => $id])->count();
-}
+// private function summeryAsset($id){
+//     return Assets::where(['HOSPCODE' => $id])->count();
+// }
 
 
 // การเข้าใช้งานประจำวัน
@@ -204,6 +205,7 @@ private function summeryAsset($id){
     public function summaryClient(Request $request){
         return response()->json([
             'assets' => Assets::where('HOSPCODE','=',$request->hospcode)->count(),
+            'assetbuilding' => Assetbuilding::where('HOSPCODE','=',$request->hospcode)->count(),
             'person' => Persons::where('HOSPCODE','=',$request->hospcode)->count()
         ]);
     }
@@ -297,6 +299,49 @@ private function summeryAsset($id){
            ]
         );
         $this->updateLog('update-asset',$data);
+        return response()->json($data, 200);
+    }
+
+    public function clearRecord(Request $request){
+        $type = $request->type;
+        $hospcode = $request->infomation['hospcode'];
+
+            switch ($type) {
+            case "asset":
+                $result = Assets::where('HOSPCODE','=',$hospcode)->delete();
+                break;
+            case "assetbuilding":
+                $result = Assetbuilding::where('HOSPCODE','=',$hospcode)->delete();
+                break;
+            case "person":
+                $result = Persons::where('HOSPCODE','=',$hospcode)->delete();
+                break;
+            default:
+               null;
+            }
+
+        return response()->json([
+            'result' => $result,
+            'type' => $type,
+            'hospcode' => $hospcode
+        ]);
+    }
+       //นำเข้าข้อมูลสิ่งก่อสร้าง
+       public function importAssetbuilding(Request $request){
+       
+        $value = $request;
+        $data = Assetbuilding::updateOrCreate(['HOSPCODE' =>  $value['HOSPCODE'],'ASSET_BUILDING_ID' => $value['ASSET_BUILDING_ID']],
+
+            ['HOS_NAME' => isset($value['HOS_NAME']) ? $value['HOS_NAME'] : NULL ,
+            'BUILD_NAME' => isset($value['BUILD_NAME'] ) ? $value['BUILD_NAME'] : NULL,
+            'BUILD_NGUD_MONEY' => isset($value['BUILD_NGUD_MONEY']) ? $value['BUILD_NGUD_MONEY'] : NULL,
+            'BUILD_CREATE' => isset($value['BUILD_CREATE'] ) ? $value['BUILD_CREATE'] : NULL,
+            'BUILD_FINISH' => isset($value['BUILD_FINISH'] ) ? $value['BUILD_FINISH'] : NULL,
+            'OLD_USE' => isset($value['TYPE_SUB_ID']) ? $value['OLD_USE'] : NULL,
+            'BUDGET_NAME' => isset($value['BUDGET_NAME'] ) ? $value['BUDGET_NAME'] : NULL,
+           ]
+        );
+        $this->updateLog('update-assetbuilding',$data);
         return response()->json($data, 200);
     }
 
