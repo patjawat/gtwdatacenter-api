@@ -17,6 +17,7 @@ class CreateAssetsTable extends Migration
             $table->id();
             $table->String('HOSPCODE')->comment('รหัสโรงพยาบาล');
             $table->String('HOS_NAME')->comment('ชื่อโรงพยาบาล');
+            $table->String('ARTICLE_ID');
             $table->String('GROUP_CLASS_CODE')->nullable();
             $table->String('GROUP_CODE')->nullable();
             $table->String('TYPE_CODE')->nullable();

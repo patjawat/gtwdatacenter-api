@@ -17,8 +17,9 @@ class CreatePersonsTable extends Migration
             $table->id();
             $table->String('HOSPCODE')->comment('รหัสโรงพยาบาล');
             $table->String('HOS_NAME')->comment('ชื่อโรงพยาบาล');
-            $table->String('HR_CID')->comment('เลขบัตรแระชาชน');
-            $table->String('SEX')->comment('เพศ');
+            $table->String('PERSON_ID');
+            $table->String('HR_CID')->nullable()->comment('เลขบัตรแระชาชน');
+            $table->String('SEX')->nullable()->comment('เพศ');
             $table->String('SEX_NAME')->nullable()->comment('เพศ');
             $table->String('HR_FNAME')->comment('ชื่อ');
             $table->String('HR_LNAME')->comment('นามสกุล');

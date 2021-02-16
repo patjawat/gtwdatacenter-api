@@ -221,8 +221,11 @@ private function branch(){
         // เก็บ logs ###
        $value = $request;
         // foreach($request->items as $key => $value){
-            $data = Persons::updateOrCreate(['HOSPCODE' =>  $value['HOSPCODE'],'HOS_NAME' =>$value['HOS_NAME'],'HR_CID' => $value['HR_CID'], ],
-                [
+            $data = Persons::create([
+                    'HOSPCODE' =>  $value['HOSPCODE'],
+                    'HOS_NAME' =>$value['HOS_NAME'],
+                    'HR_CID' => $value['HR_CID'],
+                    'PERSON_ID'=> $value['PERSON_ID'],
                     'HR_FNAME'=> $value['HR_FNAME'],
                     'HR_LNAME'=> $value['HR_LNAME'],
                     'HR_CID'=> $value['HR_CID'],
@@ -260,9 +263,11 @@ private function branch(){
        
 
         $value = $request;
-        $data = Assets::updateOrCreate(['HOSPCODE' =>  $value['HOSPCODE'],'ARTICLE_NUM' => $value['ARTICLE_NUM']],
-
-            ['HOS_NAME' => isset($value['HOS_NAME']) ? $value['HOS_NAME'] : NULL ,
+        $data = Assets::create([
+            'HOSPCODE' =>  $value['HOSPCODE'],
+            'ARTICLE_ID' => $value['ARTICLE_ID'],
+            'HOS_NAME' => isset($value['HOS_NAME']) ? $value['HOS_NAME'] : NULL ,
+            'GROUP_CLASS_CODE' => isset($value['ARTICLE_NUM'] ) ? $value['ARTICLE_NUM'] : NULL,
             'GROUP_CLASS_CODE' => isset($value['GROUP_CLASS_CODE'] ) ? $value['GROUP_CLASS_CODE'] : NULL,
             'TYPE_CODE' => isset($value['TYPE_CODE']) ? $value['TYPE_CODE'] : NULL,
             'GROUP_CODE' => isset($value['GROUP_CODE'] ) ? $value['GROUP_CODE'] : NULL,

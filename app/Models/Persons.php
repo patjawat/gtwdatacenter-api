@@ -11,6 +11,7 @@ class Persons extends Model
     protected $fillable = [
         'HOSPCODE',
         'HOS_NAME',
+        'PERSON_ID',
         'HR_FNAME',
         'HR_LNAME',
         'HR_CID',
