@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -31,4 +32,28 @@ Route::middleware('auth')->group(function () {
         Route::resource('admin/posts', 'Admin\PostsController');
 
     });
+});
+
+
+Route::get('sync',function() {
+ 
+    // }
+    // return $clear;
+    // return get_object_vars($query_11152[0]);
+});
+
+Route::get('check-database',function() {
+    if (DB::connection('db11152')->getDatabaseName()) {
+         return "Connection successful to the DB: " . DB::connection('mysql')->getDatabaseName();
+    } else {
+         return 'Connection failed !!';
+    }
+});
+
+Route::get('check-database2',function() {
+    if (DB::connection('mysql2')->getDatabaseName()) {
+         return "Connection successful to the DB: " . DB::connection('mysql2')->getDatabaseName();
+    } else {
+         return 'Connection failed !!';
+    }
 });

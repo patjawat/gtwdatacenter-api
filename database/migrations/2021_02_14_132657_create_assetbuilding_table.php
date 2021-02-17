@@ -17,7 +17,7 @@ class CreateAssetbuildingTable extends Migration
             $table->id();
             $table->String('HOSPCODE')->comment('รหัสโรงพยาบาล');
             $table->String('HOS_NAME')->comment('ชื่อโรงพยาบาล');
-            $table->String("ASSET_BUILDING_ID");
+            $table->String("ASSET_BUILDING_ID")->nullable();
             $table->String("SUP_FSN")->nullable();
             $table->String("BUILD_NAME")->nullable();
             $table->String("BUILD_NGUD_MONEY")->nullable()->comment('งบที่ใช้กี่บาท');

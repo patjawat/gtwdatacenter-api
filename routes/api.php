@@ -50,6 +50,7 @@ Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
     Route::post('datacenter/import-assetbuilding','DatacenterController@importAssetbuilding');
     Route::post('datacenter/import-person','DatacenterController@importPerson');
     Route::post('datacenter/clearrecord','DatacenterController@clearRecord');
+    Route::get('datacenter/importv1','Importv1Controller@index');
 
 });
 

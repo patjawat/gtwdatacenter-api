@@ -41,7 +41,7 @@ class DatacenterController extends Controller
     // สรุปข้อมูลครุภัณฑ์
     private function assetsSummary($hospcode){
         // $items = Assets::all();
-        $items = $hospcode ? Assets::where(['HOSPCODE' => $hospcode])->get() : Assets::limit(10);
+        $items = $hospcode ? Assets::where(['HOSPCODE' => $hospcode])->get() : Assets::all();
         return [
             'items' => 'ข้อมูลทรัพย์สิน',
             'total' => $items->count(),

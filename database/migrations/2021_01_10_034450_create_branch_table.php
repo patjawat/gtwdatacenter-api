@@ -19,7 +19,7 @@ class CreateBranchTable extends Migration
             $table->String('name');
             $table->String('service_plan');
             $table->String('province');
-            $table->String('url');
+            $table->String('url')->nullable();
             $table->timestamps();
         });
         DB::unprepared(file_get_contents('database/db/branchs.sql'));

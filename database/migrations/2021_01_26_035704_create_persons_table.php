@@ -22,7 +22,7 @@ class CreatePersonsTable extends Migration
             $table->String('SEX')->nullable()->comment('เพศ');
             $table->String('SEX_NAME')->nullable()->comment('เพศ');
             $table->String('HR_FNAME')->comment('ชื่อ');
-            $table->String('HR_LNAME')->comment('นามสกุล');
+            $table->String('HR_LNAME')->nullable()->comment('นามสกุล');
             $table->String('HR_BIRTHDAY')->nullable()->comment('วันเกิด');
             $table->String('HR_DEPARTMENT_NAME')->nullable()->comment('กลุ่มงาน');
             $table->String('HR_DEPARTMENT_SUB_NAME')->nullable()->comment('ฝ่าย/แผนก');
