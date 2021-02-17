@@ -184,6 +184,7 @@ public function branch(){
     hospcode.hospcode,hospcode.name,
     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as person,
     (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as asset,
+    (SELECT updated_at  from assets where HOSPCODE = hospcode.hospcode ORDER BY updated_at DESC LIMIT 1) as lastupdate,
     (SELECT count(id)as x from assetbuildings where HOSPCODE = hospcode.hospcode) as assetbuildings
     
     FROM hospcode 
