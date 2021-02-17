@@ -28,25 +28,35 @@ class DatacenterController extends Controller
         return response()->json([
             'infomation' => [
                 'labels' => 'ข้อมูลพื้นฐาน',
-                'branchs' => $this->branch($hospcode),
                 // 'authdaily' => $this->authDaily($hospcode),
             ],
+            'branchs' => $this->branch($hospcode),
             'provincegroup' => $this->ProvinceGroup(),
             'person' => $this->personSummary($hospcode),
-            'assets' => $this->assetsSummary($hospcode)
+            'assets' => $this->assetsSummary($hospcode),
+            'assetbuildings' => $this->assetBuildingsSummary($hospcode)
         ]);
     }
     
-
+  // สรุปข้อมูลครุภัณฑ์
+  private function assetBuildingsSummary($hospcode){
+    $items = $hospcode ? Assets::where(['HOSPCODE' => $hospcode])->get() : Assets::limit(50);
+    return [
+        'items' => 'ข้อมูลทรัพย์สิน',
+        'total' => $items->count(),
+        'datasets' => $this->assetDataset(),
+        // 'items' => $items
+    ];
+  }
     // สรุปข้อมูลครุภัณฑ์
     private function assetsSummary($hospcode){
         // $items = Assets::all();
-        $items = $hospcode ? Assets::where(['HOSPCODE' => $hospcode])->get() : Assets::all();
+        $items = $hospcode ? Assets::where(['HOSPCODE' => $hospcode])->get() : Assets::limit(50);
         return [
             'items' => 'ข้อมูลทรัพย์สิน',
             'total' => $items->count(),
             'datasets' => $this->assetDataset(),
-            'items' => $items
+            // 'items' => $items
         ];
     }
 // สรุปข้อมูลบุคลากร
@@ -56,25 +66,25 @@ class DatacenterController extends Controller
 
  // สรุปข้อมูลบุคลากร
     private function personSummary($hospcode){
-        $items = $hospcode ? Persons::where(['HOSPCODE' => $hospcode])->get() : Persons::all();
+        $items = $hospcode ? Persons::where(['HOSPCODE' => $hospcode])->get() : Persons::limit(50);
         return [
             'datasets' => $this->personDataset(),
             'items' => 'ข้อมูลบุคลากร',
             'total' => $items->count(),
-            'items' => $items
+            // 'items' => $items
         ];
     }
 
 private function ProvinceGroup($hospcode = null){
 
 
-    $sql = "SELECT CONCAT(xxx.chwpart,'0000')as chwpart,(SELECT name FROM thaiaddress where addressid=CONCAT(xxx.chwpart,'0000'))as name,SUM(xxx.x)as person,SUM(xxx.xx)as asset,SUM(xxx.asset05)as asset05
+    $sql = "SELECT CONCAT(xxx.chwpart,'0000')as chwpart,(SELECT name FROM thaiaddress where addressid=CONCAT(xxx.chwpart,'0000'))as name,SUM(xxx.x)as person,SUM(xxx.xx)as asset,SUM(xxx.totalassetbuildings)as assetbuildings
     FROM
     (
     SELECT hospcode.chwpart,hospcode.hospcode,hospcode.name,
     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as x,
     (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as xx,
-        (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode AND GROUP_CLASS_CODE = '0005') as asset05
+    (SELECT count(id)as x from assetbuildings where HOSPCODE = hospcode.hospcode) as totalassetbuildings
     FROM hospcode 
     WHERE area_code = '01'
     AND hospital_type_id IN (5,6,7)
@@ -98,7 +108,7 @@ public function groupByHospcode(Request $request){
     hospcode.hospcode,hospcode.name,
     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as person,
     (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as asset,
-    (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode AND GROUP_CLASS_CODE = '0005') as asset05
+    (SELECT count(id)as x from assetbuildings where HOSPCODE = hospcode.hospcode) as assetbuildings
     
     FROM hospcode 
     WHERE area_code = '01'
@@ -107,8 +117,8 @@ public function groupByHospcode(Request $request){
     HAVING person > 0
     ORDER BY person DESC) as asset
     where asset.chwx=$request->chwpart";
+    
     $querys = DB::select($sql);
-    // return response()->json($request->chwpart);
     return response()->json($querys);
 }
 
@@ -165,23 +175,46 @@ private function subDataType($data){
 
 
 
-private function branch(){
-    $item = [];
-    foreach (Branch::all() as $branch)
-    {
-        $item[] = [
-            'HOSPCODE' => $branch->hospcode,
-            'name' => $branch->name,
-            'service_plan' => $branch->service_plan,
-            // 'summaryAsset' => $this->summeryAsset($branch->hospcode),
-            // 'summaryPerson' => $this->summeryPerson($branch->hospcode)
-        ];
-    }
+public function branch(){
+    $sql = "SELECT asset.* from
+    (
+    SELECT CONCAT(hospcode.chwpart,'0000')as chwx,
+    (SELECT name FROM thaiaddress where addressid=CONCAT(hospcode.chwpart,'0000'))as ch,
+    (SELECT service_plan FROM branchs where branchs.hospcode=hospcode.hospcode) as service_plan,
+    hospcode.hospcode,hospcode.name,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as person,
+    (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as asset,
+    (SELECT count(id)as x from assetbuildings where HOSPCODE = hospcode.hospcode) as assetbuildings
+    
+    FROM hospcode 
+    
+    WHERE area_code = '01'
+    AND hospital_type_id IN (5,6,7)
+    GROUP BY hospcode.hospcode
+    HAVING person > 0
+    ORDER BY person DESC) as asset";
+    
+    $querys = DB::select($sql);
+    return response()->json($querys);
+
+    // $item = [];
+    // foreach (Branch::all() as $branch)
+    // {
+    //     $item[] = [
+    //         'HOSPCODE' => $branch->hospcode,
+    //         'name' => $branch->name,
+    //         'service_plan' => $branch->service_plan,
+    //         'assets' => Assets::where('HOSPCODE','=',$branch->hospcode)->count(),
+    //         // 'summaryAsset' => $this->summeryAsset($branch->hospcode),
+    //         // 'summaryPerson' => $this->summeryPerson($branch->hospcode)
+    //     ];
+    // }
 
 
     return [
-        // 'total' => $branch->count(),
-        'items' =>  $item
+        'querys' => $querys,
+        'total' => $branch->count(),
+        'items' =>  $querys
     ];
 }
 
