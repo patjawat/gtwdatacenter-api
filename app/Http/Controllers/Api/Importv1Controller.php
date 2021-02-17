@@ -29,8 +29,6 @@ class Importv1Controller extends Controller
         $query = DB::connection('db'.$id)
         ->table('asset_building')
         ->select([
-            DB::raw('SELECT NOW() as created_at'),
-            DB::raw('SELECT NOW() as updated_at'),
             DB::raw('(select ORG_PCODE FROM info_org limit 1) as HOSPCODE'),
             DB::raw('(select ORG_NAME FROM info_org limit 1) as HOS_NAME'),
             'asset_building.ID as ASSET_BUILDING_ID',
@@ -59,8 +57,6 @@ class Importv1Controller extends Controller
             $query = DB::connection('db'.$id)
             ->table('asset_article')
             ->select([
-                DB::raw('SELECT NOW() as created_at'),
-                DB::raw('SELECT NOW() as updated_at'),
                 DB::raw('distinct(ARTICLE_NUM)'),
                 DB::raw('(select ORG_PCODE FROM info_org limit 1) as HOSPCODE'),
                 DB::raw('(select ORG_NAME FROM info_org limit 1) as HOS_NAME'),
@@ -139,8 +135,6 @@ class Importv1Controller extends Controller
         $query = DB::connection('db'.$id)
         ->table('hrd_person')
         ->select([
-            DB::raw('SELECT NOW() as created_at'),
-            DB::raw('SELECT NOW() as updated_at'),
             DB::raw('(select ORG_PCODE FROM info_org limit 1) as HOSPCODE'),
             DB::raw('(select ORG_NAME FROM info_org limit 1) as HOS_NAME'),
             'hrd_person.ID as PERSON_ID',

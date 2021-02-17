@@ -52,8 +52,8 @@ class CreateAssetsTable extends Migration
             $table->String('PM_TYPE_NAME')->nullable()->comment('การบำรุงรักษา PM');
             $table->String('CAL_TYPE_NAME')->nullable()->comment('การสอบเทียบ CAL');
             $table->String('RISK_TYPE_NAME')->nullable()->comment('ความเสี่ยง');
-            $table->timestamps();
-            // $table->primary(['asset_number')->nullable()->comment();'hos_code']);
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

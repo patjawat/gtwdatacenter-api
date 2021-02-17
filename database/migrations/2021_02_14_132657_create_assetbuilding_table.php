@@ -26,7 +26,8 @@ class CreateAssetbuildingTable extends Migration
             $table->String("OLD_USE")->nullable()->comment('อายุการใช้งาน');
             $table->String("BUDGET_ID")->nullable();
             $table->String("BUDGET_NAME")->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

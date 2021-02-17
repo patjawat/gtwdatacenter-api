@@ -42,7 +42,8 @@ class CreatePersonsTable extends Migration
             $table->String('HR_AGENCY_ID')->nullable()->comment('ต้นสังกัด');
             $table->String('HR_SALARY')->nullable()->comment('เงินเดือน');
             $table->String('MONEY_POSITION')->nullable()->comment('เงินประจำตำแหน่ง');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 
