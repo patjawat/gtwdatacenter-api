@@ -40,7 +40,7 @@ class DatacenterController extends Controller
     
   // สรุปข้อมูลครุภัณฑ์
   private function assetBuildingsSummary($hospcode){
-    $items = $hospcode ? Assets::where(['HOSPCODE' => $hospcode])->get() : Assets::limit(50);
+    $items = $hospcode ? Assets::where(['HOSPCODE' => $hospcode])->get() : Assets::all();
     return [
         'items' => 'ข้อมูลทรัพย์สิน',
         'total' => $items->count(),
@@ -51,7 +51,7 @@ class DatacenterController extends Controller
     // สรุปข้อมูลครุภัณฑ์
     private function assetsSummary($hospcode){
         // $items = Assets::all();
-        $items = $hospcode ? Assets::where(['HOSPCODE' => $hospcode])->get() : Assets::limit(50);
+        $items = $hospcode ? Assets::where(['HOSPCODE' => $hospcode])->get() : Assets::all();
         return [
             'items' => 'ข้อมูลทรัพย์สิน',
             'total' => $items->count(),
@@ -66,7 +66,7 @@ class DatacenterController extends Controller
 
  // สรุปข้อมูลบุคลากร
     private function personSummary($hospcode){
-        $items = $hospcode ? Persons::where(['HOSPCODE' => $hospcode])->get() : Persons::limit(50);
+        $items = $hospcode ? Persons::where(['HOSPCODE' => $hospcode])->get() : Persons::all();
         return [
             'datasets' => $this->personDataset(),
             'items' => 'ข้อมูลบุคลากร',
