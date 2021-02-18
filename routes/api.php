@@ -43,14 +43,26 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
         
     Route::apiResource('branchs','BranchController');
+    //สรุปข้อมูลรวม
     Route::get('datacenter','DatacenterController@index');
     Route::get('datacenter/branchs','DatacenterController@branch');
     Route::get('datacenter/groupbyhospcode','DatacenterController@groupByHospcode');
     Route::post('datacenter/summary-client','DatacenterController@summaryClient');
+
+    //person summery
+    Route::get('datacenter/persons','PersonController@index');
+
+     //person summery
+     Route::get('datacenter/assets','PersonController@index');
+
+
+    // นำเข้าข้อมูลจาก client
     Route::post('datacenter/import-asset','DatacenterController@importAsset');
     Route::post('datacenter/import-assetbuilding','DatacenterController@importAssetbuilding');
     Route::post('datacenter/import-person','DatacenterController@importPerson');
+
     Route::post('datacenter/clearrecord','DatacenterController@clearRecord');
+    //นำเข้าข้อมูล datacenter โดยตรงจาก database
     Route::get('datacenter/importv1','Importv1Controller@index');
 
 });
