@@ -7,22 +7,22 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Branch;
-use App\Models\Assets;
+use App\Models\Assetbuilding;
 
-class AssetsController extends Controller
+class AssetsbuilddingController extends Controller
 {
 
     public function index()
     {
         return response()->json([
-            'totalsummery' => $this->totalSummery(),
-            'totaltypesummery' => $this->totalTypeSummery(),
-            'sexsummery' => $this->sexSummery()
+            'total' => $this->total(),
+            // 'totaltypesummery' => $this->totalTypeSummery(),
+            // 'sexsummery' => $this->sexSummery()
         ]);
     }
 
     public function total(){
-        return Assets::whereNotNull('SUP_TYPE_NAME')->count();
+        return Assetbuilding::count();
     }
 
 // สรุปข้อมูล chart 1
@@ -33,8 +33,8 @@ public function datasets(){
     FROM
     (
     SELECT hospcode.chwpart,hospcode.hospcode,hospcode.name,
-    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL) as x,
-    (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode AND SUP_TYPE_NAME IS NOT NULL) as xx,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as x,
+    (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as xx,
     (SELECT count(id)as x from assetbuildings where HOSPCODE = hospcode.hospcode) as totalassetbuildings
     FROM hospcode 
     WHERE area_code = '01'

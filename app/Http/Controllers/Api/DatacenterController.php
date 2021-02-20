@@ -24,57 +24,29 @@ class DatacenterController extends Controller
 
     public function index(Request $request){
         $hospcode = $request->hospcode;
+        $sql = "SELECT SUM(xxx.x)as person,SUM(xxx.xx)as asset,SUM(xxx.totalassetbuildings)as assetbuildings
+            FROM
+            (
+            SELECT hospcode.chwpart,hospcode.hospcode,hospcode.name,
+            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL) as x,
+            (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode AND SUP_TYPE_NAME IS NOT NULL) as xx,
+            (SELECT count(id)as x from assetbuildings where HOSPCODE = hospcode.hospcode) as totalassetbuildings
+            FROM hospcode 
+            WHERE area_code = '01'
+            AND hospital_type_id IN (5,6,7)
+            GROUP BY hospcode.hospcode
+            HAVING x > 0
+            ORDER BY x DESC) as xxx";
+            $querys = DB::select($sql);
 
         return response()->json([
             'infomation' => [
                 'labels' => 'ข้อมูลพื้นฐาน',
-                // 'authdaily' => $this->authDaily($hospcode),
             ],
-            'branchs' => $this->branch($hospcode),
-            // 'provincegroup' => $this->ProvinceGroup(),
-            // 'person' => $this->personSummary($hospcode),
-            // 'assets' => $this->assetsSummary($hospcode),
-            // 'assetbuildings' => $this->assetBuildingsSummary($hospcode)
+            'summary' => $querys,
+            'branchs' => Branch::count()
         ]);
     }
-    
-  // สรุปข้อมูลครุภัณฑ์
-  private function assetBuildingsSummary($hospcode){
-    $items = $hospcode ? Assets::where(['HOSPCODE' => $hospcode])->get() : Assets::all();
-    return [
-        'items' => 'ข้อมูลทรัพย์สิน',
-        'total' => $items->count(),
-        'datasets' => $this->assetDataset(),
-        // 'items' => $items
-    ];
-  }
-    // สรุปข้อมูลครุภัณฑ์
-    private function assetsSummary($hospcode){
-        // $items = Assets::all();
-        $items = $hospcode ? Assets::where(['HOSPCODE' => $hospcode])->get() : Assets::all();
-        return [
-            'items' => 'ข้อมูลทรัพย์สิน',
-            'total' => $items->count(),
-            'datasets' => $this->assetDataset(),
-            // 'items' => $items
-        ];
-    }
-// สรุปข้อมูลบุคลากร
-    private function assetDataset($hospcode = null){
-        return Assets::limit(1);
-    }
-
- // สรุปข้อมูลบุคลากร
-    private function personSummary($hospcode){
-        $items = $hospcode ? Persons::where(['HOSPCODE' => $hospcode])->get() : Persons::all();
-        return [
-            'datasets' => $this->personDataset(),
-            'items' => 'ข้อมูลบุคลากร',
-            'total' => $items->count(),
-            // 'items' => $items
-        ];
-    }
-
 
 // สรุปข้อมูลบุคลากร
 private function personDataset($hospcode = null){

@@ -58,6 +58,7 @@ Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
     Route::get('datacenter/assets/total','AssetsController@total');
     Route::get('datacenter/assets/datasets','AssetsController@datasets');
     Route::get('datacenter/assets/groupbyhospcode','AssetsController@groupByHospcode');
+    Route::get('datacenter/assetbuilding','AssetsbuilddingController@index');
 
     //person summery
     Route::get('datacenter/persons','PersonController@index');
