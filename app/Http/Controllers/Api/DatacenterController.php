@@ -402,3 +402,34 @@ private function updateLog($type,$data){
 }
 
 }
+
+
+// SELECT asset.* from
+//     (
+//     SELECT CONCAT(hospcode.chwpart,'0000')as chwx,
+//     (SELECT name FROM thaiaddress where addressid=CONCAT(hospcode.chwpart,'0000'))as ch,
+//     (SELECT service_plan FROM branchs where branchs.hospcode=hospcode.hospcode) as service_plan,
+//     hospcode.hospcode,hospcode.name,
+//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as person,
+    // (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ข้าราชการ') as person_type0,
+    // (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='จ้างเหมาบริการ') as person_type1,
+    //     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='จ้างเหมาบริการบุคคล') as person_type2,
+    //     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='พนักงานกระทรวงสาธารณสุข') as person_type3,
+    //     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='พนักงานราชการ') as person_type4,
+    //     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างชั่วคราว') as person_type5,
+    //     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างประจำ') as person_type6,
+    //     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างรายคาบ') as person_type7,
+    //     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างรายวัน') as person_type8,
+    //     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างเหมาบริการ') as person_type9,
+        
+//     (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as asset,
+//     (SELECT updated_at  from assets where HOSPCODE = hospcode.hospcode ORDER BY updated_at DESC LIMIT 1) as lastupdate,
+//     (SELECT count(id)as x from assetbuildings where HOSPCODE = hospcode.hospcode) as assetbuildings
+    
+//     FROM hospcode 
+//     WHERE area_code = '01'
+//     AND hospital_type_id IN (5,6,7)
+//     GROUP BY hospcode.hospcode
+//     HAVING x > 0
+//     ORDER BY per DESC) as xxx
+//     GROUP BY xxx.chwpart
