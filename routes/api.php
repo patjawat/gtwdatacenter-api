@@ -49,6 +49,16 @@ Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
     Route::get('datacenter/groupbyhospcode','DatacenterController@groupByHospcode');
     Route::post('datacenter/summary-client','DatacenterController@summaryClient');
 
+    Route::get('datacenter/persons/total','PersonController@total');
+    Route::get('datacenter/persons/datasets','PersonController@datasets');
+    Route::get('datacenter/persons/type-summary','PersonController@typeSummary');
+    Route::get('datacenter/persons/sex-summary','PersonController@sexSummery');
+    Route::get('datacenter/persons/summary-type','PersonController@SummeryType');
+
+    Route::get('datacenter/assets/total','AssetsController@total');
+    Route::get('datacenter/assets/datasets','AssetsController@datasets');
+    Route::get('datacenter/assets/groupbyhospcode','AssetsController@groupByHospcode');
+
     //person summery
     Route::get('datacenter/persons','PersonController@index');
 
