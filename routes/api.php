@@ -54,8 +54,9 @@ Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
     Route::get('datacenter/persons/type-summary','PersonController@typeSummary');
     Route::get('datacenter/persons/sex-summary','PersonController@sexSummery');
     Route::get('datacenter/persons/summary-type','PersonController@SummeryType');
-
+    Route::get('datacenter/assets','AssetsController@index');
     Route::get('datacenter/assets/total','AssetsController@total');
+    Route::get('datacenter/assets/type-money-summary','AssetsController@TypeMoneySummary');
     Route::get('datacenter/assets/datasets','AssetsController@datasets');
     Route::get('datacenter/assets/groupbyhospcode','AssetsController@groupByHospcode');
     Route::get('datacenter/assetbuilding','AssetsbuilddingController@index');
@@ -64,7 +65,7 @@ Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
     Route::get('datacenter/persons','PersonController@index');
 
      //person summery
-     Route::get('datacenter/assets','PersonController@index');
+    //  Route::get('datacenter/assets','PersonController@index');
 
 
     // นำเข้าข้อมูลจาก client

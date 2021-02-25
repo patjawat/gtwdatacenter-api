@@ -17,7 +17,8 @@ class AssetsController extends Controller
         return response()->json([
             'totalsummery' => $this->totalSummery(),
             'totaltypesummery' => $this->totalTypeSummery(),
-            'sexsummery' => $this->sexSummery()
+            'sexsummery' => $this->sexSummery(),
+            'items'=> Assets::whereNotNull('SUP_TYPE_NAME')->limit(20)->get()
         ]);
     }
 
@@ -73,6 +74,45 @@ public function groupByHospcode(Request $request){
     return response()->json($querys);
 }
 
+public function TypeMoneySummary(){
+ $sql = "SELECT
+        SUM(xxx.type_uc)as type_uc,
+        SUM(xxx.type_maintenance)as type_maintenance,
+        SUM(xxx.type_donation)as type_donation,
+        SUM(xxx.type_other)as type_other
+        FROM
+        (
+        SELECT hospcode.chwpart,hospcode.hospcode,hospcode.name,
+            (SELECT sum(PRICE_PER_UNIT)as x from assets where HOSPCODE = hospcode.hospcode AND BUDGET_NAME IS NOT NULL AND BUDGET_NAME = 'เงิน UC') as type_uc,
+            (SELECT sum(PRICE_PER_UNIT)as x from assets where HOSPCODE = hospcode.hospcode AND BUDGET_NAME IS NOT NULL AND BUDGET_NAME = 'เงินบำรุง') as type_maintenance,
+            (SELECT sum(PRICE_PER_UNIT)as x from assets where HOSPCODE = hospcode.hospcode AND BUDGET_NAME IS NOT NULL AND BUDGET_NAME = 'เงินบริจาค') as type_donation,
+            (SELECT sum(PRICE_PER_UNIT)as x from assets where HOSPCODE = hospcode.hospcode AND BUDGET_NAME IS NOT NULL AND BUDGET_NAME NOT IN ('เงิน UC','เงินบำรุง','เงินบริจาค')) as type_other
+        FROM hospcode 
+        WHERE area_code = '01'
+        AND hospital_type_id IN (5,6,7)
+        GROUP BY hospcode.hospcode
+        HAVING type_uc > 0
+        ORDER BY type_uc DESC) as xxx";
+        $querys = DB::select($sql);
+        $data = [];
+        $data[0] = [
+            'label' => 'เงิน UC',
+            'total' => $querys[0]->type_uc
+        ];
+        $data[1] = [
+            'label' => 'เงินบำรุง',
+            'total' => $querys[0]->type_maintenance
+        ];
+        $data[2] = [
+            'label' => 'เงินบริจาค',
+            'total' => $querys[0]->type_donation
+        ];
+        $data[3] = [
+            'label' => 'เงินอื่น ๆ',
+            'total' => $querys[0]->type_other
+        ];
+        return response()->json($data);
+}
 
     private function totalSummery(){
         return '0';
