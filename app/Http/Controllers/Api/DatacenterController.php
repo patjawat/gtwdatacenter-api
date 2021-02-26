@@ -28,14 +28,13 @@ class DatacenterController extends Controller
             FROM
             (
             SELECT hospcode.chwpart,hospcode.hospcode,hospcode.name,
-            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL) as x,
-            (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode AND SUP_TYPE_NAME IS NOT NULL) as xx,
+            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as x,
+            (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as xx,
             (SELECT count(id)as x from assetbuildings where HOSPCODE = hospcode.hospcode) as totalassetbuildings
             FROM hospcode 
             WHERE area_code = '01'
             AND hospital_type_id IN (5,6,7)
             GROUP BY hospcode.hospcode
-            HAVING x > 0
             ORDER BY x DESC) as xxx";
             $querys = DB::select($sql);
 
@@ -118,7 +117,6 @@ public function branch(){
     WHERE area_code = '01'
     AND hospital_type_id IN (5,6,7)
     GROUP BY hospcode.hospcode
-    HAVING person > 0
     ORDER BY person DESC) as asset";
     
     $querys = DB::select($sql);

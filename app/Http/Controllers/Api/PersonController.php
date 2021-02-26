@@ -39,16 +39,17 @@ public function datasets(){
         SUM(xxx.person_type_other)as person_type_other
             FROM
             (SELECT hospcode.chwpart,hospcode.hospcode,hospcode.name,
-            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL) as x,
-            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND SEX ='F' AND HR_PERSON_TYPE_NAME IS NOT NULL) as man,
-            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND SEX ='M' AND HR_PERSON_TYPE_NAME IS NOT NULL) as woman,
-            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='ข้าราชการ') as person_type_a,
-            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='ลูกจ้างประจำ') as person_type_b,
-            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='พนักงานราชการ') as person_type_c,
-            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='พนักงานกระทรวงสาธารณสุข') as person_type_d,
-            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='ลูกจ้างชั่วคราว') as person_type_e,
-            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='ลูกจ้างรายวัน') as person_type_f,
-            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME  NOT IN('ข้าราชการ','ลูกจ้างประจำ','พนักงานราชการ','พนักงานกระทรวงสาธารณสุข','ลูกจ้างชั่วคราว','ลูกจ้างรายวัน')) as person_type_other,
+            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as x,
+            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND SEX ='F') as man,
+            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND SEX ='M') as woman,
+            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND SEX IS NULL) as nottype,
+            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ข้าราชการ') as person_type_a,
+            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างประจำ') as person_type_b,
+            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='พนักงานราชการ') as person_type_c,
+            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='พนักงานกระทรวงสาธารณสุข') as person_type_d,
+            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างชั่วคราว') as person_type_e,
+            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างรายวัน') as person_type_f,
+            (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND (HR_PERSON_TYPE_NAME  NOT IN('ข้าราชการ','ลูกจ้างประจำ','พนักงานราชการ','พนักงานกระทรวงสาธารณสุข','ลูกจ้างชั่วคราว','ลูกจ้างรายวัน') OR HR_PERSON_TYPE_NAME IS NULL)) as person_type_other,
 
             (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as xx,
             (SELECT count(id)as x from assetbuildings where HOSPCODE = hospcode.hospcode) as totalassetbuildings
@@ -56,7 +57,6 @@ public function datasets(){
             WHERE area_code = '01'
             AND hospital_type_id IN (5,6,7)
             GROUP BY hospcode.hospcode
-            HAVING x > 0
             ORDER BY x DESC) as xxx
             GROUP BY xxx.chwpart";
         $querys =  DB::select($sql);
@@ -74,17 +74,19 @@ public function datasets(){
 
     // จำนวนบุคลากรแบ่งตามประเภท
     public function typeSummary(){
-       $type_a = Persons::where('HR_PERSON_TYPE_NAME','=','ข้าราชการ')->whereNotNull('HR_PERSON_TYPE_NAME')->count();
-       $type_b = Persons::where('HR_PERSON_TYPE_NAME','=','ลูกจ้างประจำ')->whereNotNull('HR_PERSON_TYPE_NAME')->count();
-       $type_c = Persons::where('HR_PERSON_TYPE_NAME','=','พนักงานราชการ')->whereNotNull('HR_PERSON_TYPE_NAME')->count();
-       $type_d = Persons::where('HR_PERSON_TYPE_NAME','=','พนักงานกระทรวงสาธารณสุข')->whereNotNull('HR_PERSON_TYPE_NAME')->count();
-       $type_e = Persons::where('HR_PERSON_TYPE_NAME','=','ลูกจ้างชั่วคราว')->whereNotNull('HR_PERSON_TYPE_NAME')->count();
-       $type_f = Persons::where('HR_PERSON_TYPE_NAME','=','ลูกจ้างรายวัน')->whereNotNull('HR_PERSON_TYPE_NAME')->count();
+       $type_a = Persons::where('HR_PERSON_TYPE_NAME','=','ข้าราชการ')->count();
+       $type_b = Persons::where('HR_PERSON_TYPE_NAME','=','ลูกจ้างประจำ')->count();
+       $type_c = Persons::where('HR_PERSON_TYPE_NAME','=','พนักงานราชการ')->count();
+       $type_d = Persons::where('HR_PERSON_TYPE_NAME','=','พนักงานกระทรวงสาธารณสุข')->count();
+       $type_e = Persons::where('HR_PERSON_TYPE_NAME','=','ลูกจ้างชั่วคราว')->count();
+       $type_f = Persons::where('HR_PERSON_TYPE_NAME','=','ลูกจ้างรายวัน')->count();
         //อื่นๆที่ไม่มีนอกเหนือจากนี้
-       $type_other = Persons::whereNotIn('HR_PERSON_TYPE_NAME',['ข้าราชการ','ลูกจ้างประจำ','พนักงานราชการ','พนักงานกระทรวงสาธารณสุข','ลูกจ้างชั่วคราว','ลูกจ้างรายวัน'])->whereNotNull('HR_PERSON_TYPE_NAME')->count();
+       $type_other = Persons::whereNotIn('HR_PERSON_TYPE_NAME',['ข้าราชการ','ลูกจ้างประจำ','พนักงานราชการ','พนักงานกระทรวงสาธารณสุข','ลูกจ้างชั่วคราว','ลูกจ้างรายวัน'])->orWhere('HR_PERSON_TYPE_NAME','=',null)->count();
+       $type_null = Persons::where('HR_PERSON_TYPE_NAME','=',null)->count();
+       
        // ยกเว้นข้าราชการ
-       $type_other_total = Persons::whereNotIn('HR_PERSON_TYPE_NAME',['ข้าราชการ'])->whereNotNull('HR_PERSON_TYPE_NAME')->count();
-       $type_all = Persons::whereNotNull('HR_PERSON_TYPE_NAME')->count();
+       $type_other_total = Persons::whereNotIn('HR_PERSON_TYPE_NAME',['ข้าราชการ'])->count();
+       $type_all = Persons::count();
 
        return [
            'type_a' => [
@@ -122,6 +124,10 @@ public function datasets(){
            'type_other_total' => [ // ยกเว้นข้าราชการ
             'label' => 'อื่นๆ',
             'total' => $type_other_total
+           ],
+           'type_null_total' => [ // ยกเว้นข้าราชการ
+            'label' => 'ไม่มีหมวดหมู่',
+            'total' => $type_null
         ]
        ];
        
@@ -129,12 +135,14 @@ public function datasets(){
 
     public function sexSummery(){
 
-        $f = Persons::where('SEX','=','F')->whereNotNull('HR_PERSON_TYPE_NAME')->count();
-        $m = Persons::where('SEX','=','M')->whereNotNull('HR_PERSON_TYPE_NAME')->count();
+        $f = Persons::where('SEX','=','F')->count();
+        $m = Persons::where('SEX','=','M')->count();
+        $nottype = Persons::whereNull('SEX')->count();
 
         return [
             'f' =>$f,
-            'm' =>$m
+            'm' =>$m,
+            'nottype' => $nottype
         ];
     }
     
@@ -159,19 +167,19 @@ public function datasets(){
 // SUM(xxx.person_type9)as person_type9
 //     FROM
 //     (SELECT hospcode.chwpart,hospcode.hospcode,hospcode.name,
-//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL) as x,
-//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND SEX ='F' AND HR_PERSON_TYPE_NAME IS NOT NULL) as man,
-//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND SEX ='M' AND HR_PERSON_TYPE_NAME IS NOT NULL) as woman,
-//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='ข้าราชการ') as person_type_a,
-//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='จ้างเหมาบริการ') as person_type1,
-//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='จ้างเหมาบริการบุคคล') as person_type_b,
-//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='พนักงานกระทรวงสาธารณสุข') as person_type_c,
-//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='พนักงานราชการ') as person_type_d,
-//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='ลูกจ้างชั่วคราว') as person_type_e,
-//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='ลูกจ้างประจำ') as person_type_f,
-//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='ลูกจ้างรายคาบ') as person_type7,
-//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='ลูกจ้างรายวัน') as person_type8,
-//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL AND HR_PERSON_TYPE_NAME ='ลูกจ้างเหมาบริการ') as person_type9,
+//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as x,
+//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND SEX ='F') as man,
+//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND SEX ='M') as woman,
+//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ข้าราชการ') as person_type_a,
+//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='จ้างเหมาบริการ') as person_type1,
+//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='จ้างเหมาบริการบุคคล') as person_type_b,
+//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='พนักงานกระทรวงสาธารณสุข') as person_type_c,
+//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='พนักงานราชการ') as person_type_d,
+//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างชั่วคราว') as person_type_e,
+//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างประจำ') as person_type_f,
+//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างรายคาบ') as person_type7,
+//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างรายวัน') as person_type8,
+//     (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างเหมาบริการ') as person_type9,
 //     (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as xx,
 //     (SELECT count(id)as x from assetbuildings where HOSPCODE = hospcode.hospcode) as totalassetbuildings
 //     FROM hospcode 

@@ -23,7 +23,7 @@ class AssetsController extends Controller
     }
 
     public function total(){
-        return Assets::whereNotNull('SUP_TYPE_NAME')->count();
+        return Assets::count();
     }
 
 // สรุปข้อมูล chart 1
@@ -34,8 +34,8 @@ public function datasets(){
     FROM
     (
     SELECT hospcode.chwpart,hospcode.hospcode,hospcode.name,
-    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME IS NOT NULL) as x,
-    (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode AND SUP_TYPE_NAME IS NOT NULL) as xx,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as x,
+    (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as xx,
     (SELECT count(id)as x from assetbuildings where HOSPCODE = hospcode.hospcode) as totalassetbuildings
     FROM hospcode 
     WHERE area_code = '01'
@@ -84,11 +84,11 @@ public function TypeMoneySummary(){
  FROM
  (
  SELECT hospcode.chwpart,hospcode.hospcode,hospcode.name,
-     (SELECT sum(PRICE_PER_UNIT)as x from assets where HOSPCODE = hospcode.hospcode AND BUDGET_NAME IS NOT NULL AND BUDGET_NAME = 'งบประมาณ') as type_uc,
-     (SELECT sum(PRICE_PER_UNIT)as x from assets where HOSPCODE = hospcode.hospcode AND BUDGET_NAME IS NOT NULL AND BUDGET_NAME = 'เงินบำรุง') as type_maintenance,
-     (SELECT sum(PRICE_PER_UNIT)as x from assets where HOSPCODE = hospcode.hospcode AND BUDGET_NAME IS NOT NULL AND BUDGET_NAME = 'เงินบริจาค') as type_donation,
-     (SELECT sum(PRICE_PER_UNIT)as x from assets where HOSPCODE = hospcode.hospcode AND BUDGET_NAME IS NOT NULL AND BUDGET_NAME IN ('งบค่าเสื่อม','งบค่าเสื่อม 10 %','งบค่าเสื่อม 20 % ปี 64','งบค่าเสื่อม 50 %','งบค่าเสื่อม 70 %')) as type_ds,
-     (SELECT sum(PRICE_PER_UNIT)as x from assets where HOSPCODE = hospcode.hospcode AND BUDGET_NAME IS NOT NULL AND BUDGET_NAME NOT IN ('งบประมาณ','เงินบำรุง','เงินบริจาค','งบค่าเสื่อม','งบค่าเสื่อม 10 %','งบค่าเสื่อม 20 % ปี 64','งบค่าเสื่อม 50 %','งบค่าเสื่อม 70 %')) as type_other
+     (SELECT sum(PRICE_PER_UNIT)as x from assets where HOSPCODE = hospcode.hospcode AND BUDGET_NAME = 'งบประมาณ') as type_uc,
+     (SELECT sum(PRICE_PER_UNIT)as x from assets where HOSPCODE = hospcode.hospcode AND BUDGET_NAME = 'เงินบำรุง') as type_maintenance,
+     (SELECT sum(PRICE_PER_UNIT)as x from assets where HOSPCODE = hospcode.hospcode AND BUDGET_NAME = 'เงินบริจาค') as type_donation,
+     (SELECT sum(PRICE_PER_UNIT)as x from assets where HOSPCODE = hospcode.hospcode AND BUDGET_NAME IN ('งบค่าเสื่อม','งบค่าเสื่อม 10 %','งบค่าเสื่อม 20 % ปี 64','งบค่าเสื่อม 50 %','งบค่าเสื่อม 70 %')) as type_ds,
+     (SELECT sum(PRICE_PER_UNIT)as x from assets where HOSPCODE = hospcode.hospcode AND BUDGET_NAME NOT IN ('งบประมาณ','เงินบำรุง','เงินบริจาค','งบค่าเสื่อม','งบค่าเสื่อม 10 %','งบค่าเสื่อม 20 % ปี 64','งบค่าเสื่อม 50 %','งบค่าเสื่อม 70 %')) as type_other
  FROM hospcode 
  WHERE area_code = '01'
  AND hospital_type_id IN (5,6,7)
