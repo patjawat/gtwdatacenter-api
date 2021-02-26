@@ -76,6 +76,9 @@ Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
     Route::post('datacenter/clearrecord','DatacenterController@clearRecord');
     //นำเข้าข้อมูล datacenter โดยตรงจาก database
     Route::get('datacenter/importv1','Importv1Controller@index');
+
+});
+
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 
