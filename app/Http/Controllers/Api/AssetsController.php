@@ -41,8 +41,7 @@ public function datasets(){
     WHERE area_code = '01'
     AND hospital_type_id IN (5,6,7)
     GROUP BY hospcode.hospcode
-    HAVING x > 0
-    ORDER BY x DESC) as xxx
+    ORDER BY xx DESC) as xxx
     GROUP BY xxx.chwpart";
 
 
