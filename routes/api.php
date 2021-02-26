@@ -75,66 +75,7 @@ Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
 
     Route::post('datacenter/clearrecord','DatacenterController@clearRecord');
     //นำเข้าข้อมูล datacenter โดยตรงจาก database
-    // Route::get('datacenter/importv1','Importv1Controller@index');
-    Route::get('datacenter/importv1',function(){
-        $query = DB::connection('db11119')
-        ->table('hrd_person')
-        ->select([
-            DB::raw('(select ORG_PCODE FROM info_org limit 1) as HOSPCODE'),
-            DB::raw('(select ORG_NAME FROM info_org limit 1) as HOS_NAME'),
-            'hrd_person.ID as PERSON_ID',
-            'HR_FNAME',
-            'HR_FNAME',
-            'HR_LNAME',
-            'HR_CID',
-            'HR_BIRTHDAY',
-            'SEX',
-            'SEX_NAME',
-            'HR_DEPARTMENT_NAME',
-            'HR_DEPARTMENT_SUB_NAME',
-            'HR_DEPARTMENT_SUB_SUB_NAME',
-            'HR_STARTWORK_DATE',
-            'HR_POSITION_NUM',
-            'HR_POSITION_ID',
-            'POSITION_IN_WORK',
-            'VCODE',
-            'VCODE_DATE',
-            'HR_LEVEL_NAME',
-            'HR_STATUS_NAME',
-            'HR_KIND_NAME',
-            'HR_KIND_TYPE_NAME',
-            'hrd_person.HR_PERSON_TYPE_ID',
-            'HR_PERSON_TYPE_NAME',
-            'HR_AGENCY_ID',
-            'HR_SALARY',
-            'MONEY_POSITION',
-        ])
-        ->leftJoin('hrd_prefix','hrd_person.HR_PREFIX_ID','=','hrd_prefix.HR_PREFIX_ID')
-        ->leftJoin('hrd_sex','hrd_person.SEX','=','hrd_sex.SEX_ID')
-        ->leftJoin('hrd_status','hrd_person.HR_STATUS_ID','=','hrd_status.HR_STATUS_ID')
-        ->leftJoin('hrd_level','hrd_person.HR_LEVEL_ID','=','hrd_level.HR_LEVEL_ID')
-        ->leftJoin('hrd_department_sub_sub','hrd_person.HR_DEPARTMENT_SUB_SUB_ID','=','hrd_department_sub_sub.HR_DEPARTMENT_SUB_SUB_ID')
-        ->leftJoin('hrd_department','hrd_person.HR_DEPARTMENT_ID','=','hrd_department.HR_DEPARTMENT_ID')
-        ->leftJoin('hrd_department_sub','hrd_person.HR_DEPARTMENT_SUB_ID','=','hrd_department_sub.HR_DEPARTMENT_SUB_ID')
-        ->leftJoin('hrd_bloodgroup','hrd_person.HR_BLOODGROUP_ID','=','hrd_bloodgroup.HR_BLOODGROUP_ID')
-        ->leftJoin('hrd_marry_status','hrd_person.HR_MARRY_STATUS_ID','=','hrd_marry_status.HR_MARRY_STATUS_ID')
-        ->leftJoin('hrd_religion','hrd_person.HR_RELIGION_ID','=','hrd_religion.HR_RELIGION_ID')
-        ->leftJoin('hrd_nationality','hrd_person.HR_NATIONALITY_ID','=','hrd_nationality.HR_NATIONALITY_ID')
-        ->leftJoin('hrd_citizenship','hrd_person.HR_CITIZENSHIP_ID','=','hrd_citizenship.HR_CITIZENSHIP_ID')
-        ->leftJoin('hrd_tumbon','hrd_person.TUMBON_ID','=','hrd_tumbon.ID')
-        ->leftJoin('hrd_amphur','hrd_person.AMPHUR_ID','=','hrd_amphur.ID')
-        ->leftJoin('hrd_province','hrd_person.PROVINCE_ID','=','hrd_province.ID')
-        ->leftJoin('hrd_kind','hrd_person.HR_KIND_ID','=','hrd_kind.HR_KIND_ID')
-        ->leftJoin('hrd_kind_type','hrd_person.HR_KIND_TYPE_ID','=','hrd_kind_type.HR_KIND_TYPE_ID')
-        ->leftJoin('hrd_person_type','hrd_person.HR_PERSON_TYPE_ID','=','hrd_person_type.HR_PERSON_TYPE_ID')
-        ->whereNotIn('hrd_person.HR_STATUS_ID', [5,6,7,8])->toSql();
-
-
-        return response()->json($query);
-    });
-
-});
-
+    Route::get('datacenter/importv1','Importv1Controller@index');
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 
