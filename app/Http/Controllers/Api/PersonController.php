@@ -46,17 +46,19 @@ class PersonController extends Controller
           $querys =  DB::select($sql);
           
         return response()->json([
-            'male' =>(int) $querys[0]->male,
-              'female' =>(int) $querys[0]->female,
-              'nottype' =>(int) $querys[0]->nottype,
-              'type_a' =>(int) $querys[0]->person_type_a,
-              'type_other' =>(int) $querys[0]->person_type_other,
-              'type_null' =>(int) $querys[0]->person_type_null,
+                'male' =>(int) $querys[0]->male,
+                'female' =>(int) $querys[0]->female,
+                'nottype' =>(int) $querys[0]->nottype,
+                'type_a' =>(int) $querys[0]->person_type_a,
+                'type_other' =>(int) $querys[0]->person_type_other,
+                'type_null' =>(int) $querys[0]->person_type_null,
+                'typesummary' => $this->typeSummary(),
+                'datasets' => $this->datasets()
         ]);
     }
     
 // สรุปข้อมูล chart 1
-public function datasets(){
+private function datasets(){
        
 
         $sql = "SELECT CONCAT(xxx.chwpart,'0000')as chwpart,
