@@ -207,10 +207,24 @@ private function datasets(){
     }
 
 
-    public function personTypeSummary(){
-
+    public function items(Request $request){
+        $key = $request->get('key');
+        $data = Persons::where('HR_FNAME', 'like',$key . '%')
+            ->orWhere('HR_LNAME', 'like', '%' . $key . '%')
+            ->orWhere('HOSPCODE', 'like', '%' . $key . '%')
+            ->orWhere('HOS_NAME', 'like', '%' . $key . '%')
+            ->orWhere('POSITION_IN_WORK', 'like', '%' . $key . '%')
+            ->orWhere('HR_PERSON_TYPE_NAME', 'like', '%' . $key . '%')
+            ->paginate(10);
+        return response()->json( $key ? $data  : Persons::where('id','=','0')->paginate(10));
     
     }
+
+
+    // public function personTypeSummary(){
+
+    
+    // }
 
     // public function sexSummary(){
 

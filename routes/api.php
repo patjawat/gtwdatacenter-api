@@ -51,6 +51,7 @@ Route::group(["namespace"=>"App\Http\Controllers\Api"],function() {
 
     Route::get('datacenter/persons/total','PersonController@total');
     Route::get('datacenter/persons/datasets','PersonController@datasets');
+    Route::get('datacenter/persons/items','PersonController@items');
     Route::get('datacenter/persons/type-summary','PersonController@typeSummary');
     Route::get('datacenter/persons/sex-summary','PersonController@sexSummery');
     Route::get('datacenter/persons/summary-type','PersonController@SummeryType');
