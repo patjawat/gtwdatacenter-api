@@ -215,7 +215,9 @@ private function datasets(){
             ->orWhere('HOS_NAME', 'like', '%' . $key . '%')
             ->orWhere('POSITION_IN_WORK', 'like', '%' . $key . '%')
             ->orWhere('HR_PERSON_TYPE_NAME', 'like', '%' . $key . '%')
-            ->paginate(10);
+            ->paginate(10)
+            ->appends(request()
+            ->query());
         return response()->json( $key ? $data  : Persons::where('id','=','0')->paginate(10));
     
     }
