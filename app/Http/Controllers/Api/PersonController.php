@@ -209,12 +209,17 @@ private function datasets(){
 
     public function items(Request $request){
         $key = $request->get('key');
-        $data = Persons::where('HR_FNAME', 'like',$key . '%')
+        $data = Persons::select('persons.*','branchs.hospcode','branchs.name','branchs.province','branchs.service_plan')
+        ->leftJoin('branchs','branchs.hospcode','=','persons.HOSPCODE')
+        ->where('HR_FNAME', 'like',$key . '%')
             ->orWhere('HR_LNAME', 'like', '%' . $key . '%')
-            ->orWhere('HOSPCODE', 'like', '%' . $key . '%')
+            ->orWhere('persons.HOSPCODE', 'like', '%' . $key . '%')
             ->orWhere('HOS_NAME', 'like', '%' . $key . '%')
             ->orWhere('POSITION_IN_WORK', 'like', '%' . $key . '%')
             ->orWhere('HR_PERSON_TYPE_NAME', 'like', '%' . $key . '%')
+            ->orWhere('province', 'like', '%' . $key . '%')
+            ->orWhere('HR_LEVEL_NAME', 'like', '%' . $key . '%')
+            ->orWhere('name', 'like', '%' . $key . '%')
             ->paginate(10)
             ->appends(request()
             ->query());
