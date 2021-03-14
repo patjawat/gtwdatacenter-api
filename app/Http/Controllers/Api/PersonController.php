@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Pagination\Paginator;
 use Illuminate\Http\Request;
 use App\Models\Branch;
 use App\Models\Persons;
@@ -225,6 +225,44 @@ private function datasets(){
             ->query());
         return response()->json( $key ? $data  : Persons::where('id','=','0')->paginate(10));
     
+    }
+
+
+    public function reportsPositionInProvince(){
+        // $sql = "SELECT p1.POSITION_IN_WORK as name,
+        // (SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = p1.POSITION_IN_WORK) as total,
+        // (SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = p1.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'น่าน')) as nan,
+        // (SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = p1.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'พะเยา')) as phayao,
+        // (SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = p1.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'ลำปาง')) as lampang,
+        // (SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = p1.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'ลำพูน')) as lampoon,
+        // (SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = p1.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'เชียงราย')) as chiangrai,
+        // (SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = p1.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'เชียงใหม่')) as chiangmai,
+        // (SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = p1.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'แพร่')) as phrae,
+        // (SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = p1.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'แม่ฮ่องสอน')) as maehongson
+        // FROM persons p1
+        // GROUP by p1.POSITION_IN_WORK";
+        //  $querys =  DB::select($sql);
+
+         $querys = Persons::select(
+             DB::raw('POSITION_IN_WORK as name'),
+             DB::raw("(SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = persons.POSITION_IN_WORK) as total"),
+             DB::raw("(SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = persons.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'น่าน')) as nan"),
+             DB::raw("(SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = persons.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'พะเยา')) as phayao"),
+             DB::raw("(SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = persons.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'ลำปาง')) as lampang"),
+             DB::raw("(SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = persons.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'ลำพูน')) as lampoon"),
+             DB::raw("(SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = persons.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'เชียงราย')) as chiangrai"),
+             DB::raw("(SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = persons.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'เชียงใหม่')) as chiangmai"),
+             DB::raw("(SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = persons.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'แพร่')) as phrae"),
+             DB::raw("(SELECT count(id) FROM persons p2 WHERE POSITION_IN_WORK = persons.POSITION_IN_WORK AND HOSPCODE IN (SELECT hospcode FROM branchs WHERE province = 'แม่ฮ่องสอน')) as maehongson"),
+             )
+         ->groupBy('POSITION_IN_WORK')
+         ->limit(1)
+         ->paginate(10);
+
+         return response()->json([
+             'label' =>'รายงานบุคลากรแยกตามวิชาชีพ',
+             'items' =>$querys
+         ]);
     }
 
 
