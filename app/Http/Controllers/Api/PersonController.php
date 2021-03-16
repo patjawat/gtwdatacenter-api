@@ -61,7 +61,7 @@ class PersonController extends Controller
 private function datasets(){
        
 
-        $sql = "SELECT CONCAT(xxx.chwpart,'0000')as chwpart,
+        $sql = "SELECT CONCAT(xxx.chwpart,'0000')as chwpart,xxx.chwpart_code as chwpart_code,
         (SELECT name FROM thaiaddress where addressid=CONCAT(xxx.chwpart,'0000'))as name,
         SUM(xxx.x)as person,
         SUM(xxx.xx)as asset,
@@ -78,7 +78,7 @@ private function datasets(){
         SUM(xxx.person_type_other_and_null)as person_type_other_and_null,
         SUM(xxx.person_type_null)as person_type_null
             FROM
-            (SELECT hospcode.chwpart,hospcode.hospcode,hospcode.name,
+            (SELECT hospcode.chwpart,hospcode.hospcode,hospcode.name,hospcode.name as hname,hospcode.chwpart as chwpart_code,
             (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as x,
             (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND SEX ='F') as male,
             (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND SEX ='M') as female,
@@ -265,23 +265,64 @@ private function datasets(){
          ]);
     }
 
+    public function PersonType(){
+        $querys = Persons::select('POSITION_IN_WORK as name')->groupBy('HR_PERSON_TYPE_NAME')->get();
+        return response()->json($querys);
 
-    // public function personTypeSummary(){
+    }  
+// สรุปข้อมูล chart 1
+public function Profession(Request $request){
+    $code = $request->get('chwpart_code') ? 'AND chwpart = '.$request->get('chwpart_code') : '';
+    $name = $request->get('chwpart_code') ? 'xxx.hname as name,' :  '(SELECT name FROM thaiaddress where addressid=CONCAT(xxx.chwpart,"0000"))as name,';
+$sql = "SELECT 
+ $name
+xxx.hospcode,CONCAT(xxx.chwpart,'0000')as chwpart,
+SUM(xxx.x)as person,
+SUM(xxx.xx)as asset,
+SUM(xxx.totalassetbuildings)as assetbuildings,
+SUM(xxx.male)as male,
+SUM(xxx.female)as female,
+SUM(xxx.person_type_a)as person_type_a,
+SUM(xxx.person_type_b)as person_type_b,
+SUM(xxx.person_type_c)as person_type_c,
+SUM(xxx.person_type_d)as person_type_d,
+SUM(xxx.person_type_e)as person_type_e,
+SUM(xxx.person_type_f)as person_type_f,
+SUM(xxx.person_type_other)as person_type_other,
+SUM(xxx.person_type_other_and_null)as person_type_other_and_null,
+SUM(xxx.person_type_null)as person_type_null
+    FROM
+    (SELECT hospcode.chwpart,hospcode.hospcode,hospcode.name as hname,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode) as x,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND SEX ='F') as male,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND SEX ='M') as female,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND SEX IS NULL) as nottype,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ข้าราชการ') as person_type_a,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างประจำ') as person_type_b,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='พนักงานราชการ') as person_type_c,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='พนักงานกระทรวงสาธารณสุข') as person_type_d,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างชั่วคราว') as person_type_e,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME ='ลูกจ้างรายวัน') as person_type_f,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME  NOT IN('ข้าราชการ','ลูกจ้างประจำ','พนักงานราชการ','พนักงานกระทรวงสาธารณสุข','ลูกจ้างชั่วคราว','ลูกจ้างรายวัน')) as person_type_other,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND (HR_PERSON_TYPE_NAME  NOT IN('ข้าราชการ','ลูกจ้างประจำ','พนักงานราชการ','พนักงานกระทรวงสาธารณสุข','ลูกจ้างชั่วคราว','ลูกจ้างรายวัน') OR HR_PERSON_TYPE_NAME IS NULL)) as person_type_other_and_null,
+    (SELECT count(id)as x from persons where HOSPCODE = hospcode.hospcode AND HR_PERSON_TYPE_NAME  IS NULL) as person_type_null,
 
-    
-    // }
+    (SELECT count(id)as x from assets where HOSPCODE = hospcode.hospcode) as xx,
+    (SELECT count(id)as x from assetbuildings where HOSPCODE = hospcode.hospcode) as totalassetbuildings
+    FROM hospcode 
+    WHERE area_code = '01'
+    AND hospital_type_id IN (5,6,7)
+    $code
+    GROUP BY hospcode.hospcode
+    ORDER BY x DESC) as xxx
+    GROUP BY xxx.hospcode";
 
-    // public function sexSummary(){
+    $querys =  DB::select($sql);
+    return [
+        'label' => 'รายงานจำนวนบุคลากรแยกตามวิชาชีพ',
+        'chwpart_code' => $request->get('chwpart_code'),
+        'items' => $querys,
+    ];
+}
 
-    //     $f = Persons::where('SEX','=','F')->count();
-    //     $m = Persons::where('SEX','=','M')->count();
-    //     $nottype = Persons::whereNull('SEX')->count();
-
-    //     return [
-    //         'f' =>$f,
-    //         'm' =>$m,
-    //         'nottype' => $nottype
-    //     ];
-    // }
-    
 }
